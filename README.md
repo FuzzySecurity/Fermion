@@ -6,7 +6,7 @@ What's in a name: A fermion can be an elementary particle, such as the electron,
 
 ## How to get Fermion?
 
-You can run Fermion from source downloading the repo and then issuing the following commands from a command prompt.
+You can run Fermion from source by downloading the repo and then issuing the following commands from a command prompt.
 
 ```
 set npm_config_runtime=electron
@@ -20,7 +20,7 @@ Once complete you can run Fermion with:
 npm start
 ```
 
-You can compile your own release package with "electron-packager" by navigating to the application folder and issuing the following command.
+You can also compile your own release package with "electron-packager" by navigating to the application folder and issuing the following command.
 
 ```
 electron-packager . --icon assets\img\fermion.ico
@@ -30,7 +30,7 @@ Alternatively you can get the latest pre-built version for x64 Windows from [rel
 
 ## Eye candy
 
-You can sample of Fermion at work below.
+You can see a sample of Fermion at work below.
 
 ![Fermion](Images/Fermion-1.png)
 
