@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Fermion</title>
+
+	<!-- Styles -->
+	<link rel="stylesheet" href="../assets/css/bootstrap.css">
+	<link rel="stylesheet" href="../assets/css/codemirror.css">
+	<link rel="stylesheet" href="../assets/css/mbo.css">
+	<link rel="stylesheet" href="../assets/css/frida.css">
+
+	<!-- Font JS -->
+	<script defer src="../assets/js/solid.js"></script>
+	<script defer src="../assets/js/fontawesome.js"></script>
+
+	<!-- Monaco Themes -->
+	<script defer src="../assets/js/monaco-theme.js"></script>
+</head>
+
+<body>
+	<div class="wrapper">
+		<!-- Sidebar Holder -->
+		<nav id="sidebar">
+			<div class="sidebar-header">
+
+				<img src="../assets/img/fermion.png" width=90% height=90%>
+			</div>
+
+			<ul class="list-unstyled components">
+				<div class="form-group mx-sm-3 mb-2">
+					<label for="procID">Process ID</label>
+					<input type="procID" class="form-control" id="procID" placeholder="ID">
+				</div>
+				<div class="form-group mx-sm-3 mb-2">
+					<label for="procName">Process Name</label>
+					<input type="procName" class="form-control" id="procName" placeholder="Name">
+				</div>
+
+				<ul class="list-unstyled CTAs">
+					<li>
+						<button type="button" id="FridaAttach" class="btn btn-light btn-sm btn-block btn-space">Attach</button>
+					</li>
+					<li>
+						<button type="button" id="FridaDetach" class="btn btn-dark btn-sm btn-block btn-space">Detach</button>
+					</li>
+					<li>
+						<button type="button" id="FridaReload" class="btn btn-level btn-sm btn-block btn-space">Reload Script</button>
+					</li>
+					<li>
+						<button type="button" id="FridaProc" class="btn btn-info btn-sm btn-block btn-space">Process Info</button>
+					</li>
+				</ul>
+		</nav>
+
+
+		<!-- Page Content Holder -->
+		<div id="content">
+			<div class="container-fluid">
+
+
+				<div class="row HeadRow" style="-webkit-app-region: drag">
+
+					<nav class="navbar navbar-expand bg-transp">
+						<button class="navbar-toggler" type="button" data-toggle="collapse"
+							data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+							aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+
+						<div class="collapse navbar-collapse" id="navbarSupportedContent">
+							<ul class="navbar-nav mr-auto" style="-webkit-app-region: no-drag;">
+								<li class="nav-item">
+									<button type="button" id="sidebarCollapse" class="navbar-btn">
+										<span></span>
+										<span></span>
+										<span></span>
+									</button>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="FermionOpen" href="#">Open</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="FermionSave" href="#">Save</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="FermionDevTools" href="#">DevTools</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="FermionAbout" href="#">About</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="FermionExit" href="#">Exit</a>
+								</li>
+							</ul>
+
+							<div class="form-group" style="padding-top: 5px;height: 80%">
+								<select class="form-control form-control-sm"
+									style="-webkit-app-region: no-drag; font-size: 0.7rem !important;"
+									id="MonacoThemeSelect" onchange="setMonacoTheme()">
+									<option>idleFingers</option>
+									<option>Cobalt</option>
+									<option>MerbivoreSoft</option>
+									<option>Katzenmilch</option>
+									<option>Monokai</option>
+									<option>Solarized-Dark</option>
+									<option>VSCode</option>
+									<option>VSCode-Dark</option>
+									<option>VSCode-HighContrast</option>
+								</select>
+							</div>
+						</div>
+					</nav>
+				</div>
+
+				<div class="row CodeMirrorRow">
+					<section id="editor-container">
+						<div id="container" style="height:100%;overflow:visible"></div>
+					</section>
+				</div>
+
+				<div class="row JSRow">
+					<section id="frida-container">
+						<textarea id="FridaOut" autofocus="true"></textarea>
+					</section>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+
+<script src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+<script src="../assets/js/popper.min.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
+<script src="render.js"></script>
+
+<script>
+	(function () {
+		const path = require('path');
+		const amdLoader = require('../node_modules/monaco-editor/min/vs/loader.js');
+		const amdRequire = amdLoader.require;
+		const amdDefine = amdLoader.require.define;
+		function uriFromPath(_path) {
+			var pathName = path.resolve(_path).replace(/\\/g, '/');
+			if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+				pathName = '/' + pathName;
+			}
+			return encodeURI('file://' + pathName);
+		}
+		amdRequire.config({
+			baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+		});
+		// workaround monaco-css not understanding the environment
+		self.module = undefined;
+		amdRequire(['vs/editor/editor.main'], function () {
+			monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+				noSemanticValidation: true,
+				noSyntaxValidation: true
+			});
+
+			monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+				target: monaco.languages.typescript.ScriptTarget.Latest,
+				allowNonTsExtensions: true,
+				moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+			});
+
+			// Load custom Frida Lang TypeScript defs
+			LocalLoadLang('../assets/lang/frida.d.ts').then(function (data) {
+				monaco.languages.typescript.typescriptDefaults.addExtraLib(data.responseText, uriFromPath(path.join(__dirname, '../assets/lang/frida.d.ts')));
+			})
+
+			// Load monaco theme
+			monaco.editor.defineTheme("idleFingers", idleFingers);
+			monaco.editor.setTheme("idleFingers");
+
+			var editor = monaco.editor.create(document.getElementById('container'), {
+				value: [
+				'//-------------------------------------------//',
+				'//              Fermion v0.3                 //',
+				'//                                    ~b33f  //',
+				'//-------------------------------------------//',
+				'',
+				'// ~~ Editor ~~ //',
+				'',
+				'// + The text editor is a fully featured monaco-editor',
+				'//   |-> Linting, IntelliSense, Shortcuts (press F1)',
+				'//   |-> https://microsoft.github.io/monaco-editor/',
+				'//',
+				'// + I am trapping Ctrl-s in JS so you can save text',
+				'//   without clicking on the menu',
+				'//',
+				'// + The full Frida API is integrated in the editor',
+				'//   |-> monaco.languages.typescript.typescriptDefaults.addExtraLib(....)',
+				'//   |-> https://github.com/frida/frida-gum/blob/master/bindings/gumjs/types/frida-gum/frida-gum.d.ts',
+				'',
+				'// ~~ Frida ~~ //',
+				'',
+				'// + Please consult the JS API docs',
+				'//   |-> https://frida.re/docs/javascript-api/',
+				'//',
+				'// + To send output to the text area you have to use "send(...)"',
+				'//   |-> Not this: console.log("Hello from Frida!")',
+				'//   |-> But this: send("Hello from Frida!")'
+				].join('\n'),
+				language: 'typescript',
+				//theme: "vs-dark",
+				scrollBeyondLastLine: false,
+				automaticLayout: true
+			});
+
+			window.addEventListener('resize', function (e) {
+				SetDynamicResize(editor);
+			});
+
+			// Store the editor reff as a global var
+			MonacoCodeEditor = editor;
+		});
+	})();
+
+
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		$('#sidebarCollapse').on('click', function () {
+			$('#sidebar').toggleClass('active');
+			$(this).toggleClass('active');
+			setTimeout(function () { SetDynamicResize(MonacoCodeEditor); }, 600);
+
+		});
+	});
+</script>
+
+</html>

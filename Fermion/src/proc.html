@@ -1,0 +1,111 @@
+<html>
+
+<head>
+	<style>
+		body {
+			background-color: #464646 !important;
+			-webkit-app-region: drag;
+		}
+
+		* {
+			font-family: monospace;
+			line-height: 8px;
+		}
+
+		::-webkit-scrollbar {
+			width: 0px;
+		}
+
+		td, th {
+			color: #ffffff !important;
+		}
+
+		div.barFrame {
+			user-select: none;
+			text-align:right;
+			display:block;
+			padding-right:5px;
+			padding-top:5px;
+			padding-bottom:5px;
+			background-color:#ff4757;
+			position:fixed;
+			top:0;
+			width:100%;
+		}
+		div.dataFrame {
+			-webkit-app-region:no-drag;
+			position:fixed;
+			top:40px;
+        	margin:4px, 4px; 
+        	padding:4px;
+        	overflow-x: hidden; 
+        	overflow-x: auto; 
+        	text-align:justify;
+			overflow-y:scroll;
+			height: 94vh;
+			width: 100%;
+        }
+	</style>
+	<link rel="stylesheet" href="../assets/css/bootstrap.css">
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row barFrame">
+			<a id="CloseProc" href="#">
+				<img src="../assets/img/x.png" height=30px width=26px style="-webkit-app-region: no-drag;"><br />
+			</a>
+		</div>
+
+		<div class="row dataFrame">
+			<table id="ProcSet" class="table table-borderless table-hover table-sm">
+				<thead>
+					<tr>
+						<th scope="col">PID</th>
+						<th scope="col">Process</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		const frida = require('frida');
+		// Overwrite default node.js prop to get Jquery working
+		window.$ = window.jQuery = require('jquery');
+
+		// Populate poc list
+		async function getProcList() {
+			let LocalMachine = await frida.getDevice("local");
+			let Applications = await LocalMachine.enumerateProcesses();
+			return Applications;
+		}
+		getProcList().then(data => {
+			// Insert separator
+			var table = document.getElementById("ProcSet");
+			var row = table.insertRow(table.length);
+			row.insertCell(0).innerHTML = "---"
+			row.insertCell(1).innerHTML = "-------"
+			// Sort array
+			data.sort((a, b) => (a.pid > b.pid) ? 1 : -1)
+			// Populate table
+			for (var i = 0; i < data.length; i++) {
+				var table = document.getElementById("ProcSet");
+				var row = table.insertRow(table.length);
+				var pid = row.insertCell(0);
+				var name = row.insertCell(1);
+				pid.innerHTML = data[i].pid;
+				name.innerHTML = data[i].name;
+			}
+		});
+
+		// Close window handler
+		document.getElementById("CloseProc").onclick = function () {
+			window.close();
+		}
+	</script>
+</body>
+
+</html>

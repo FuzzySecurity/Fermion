@@ -1,0 +1,18 @@
+{
+  "name": "fermion",
+  "version": "0.3.0",
+  "description": "Fermion is a stand-alone Frida electron tool.",
+  "main": "core.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Ruben Boonen (@FuzzySec)",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "electron": "^5.0.0",
+    "frida": "^12.5.8",
+    "jquery": "^3.4.1",
+    "monaco-editor": "^0.17.0",
+    "mutex-promise": "^0.1.0"
+  }
+}
