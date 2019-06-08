@@ -3,7 +3,7 @@
 // ~~> https://github.com/brijeshb42/monaco-themes
 /////////////////////////////////
 // Note:
-// I made small background color changes
+// I made small color changes
 // to "idleFingers" & "Katzenmilch".
 /////////////////////////////////
 

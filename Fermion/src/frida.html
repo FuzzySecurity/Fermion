@@ -7,8 +7,6 @@
 
 	<!-- Styles -->
 	<link rel="stylesheet" href="../assets/css/bootstrap.css">
-	<link rel="stylesheet" href="../assets/css/codemirror.css">
-	<link rel="stylesheet" href="../assets/css/mbo.css">
 	<link rel="stylesheet" href="../assets/css/frida.css">
 
 	<!-- Font JS -->
@@ -25,7 +23,7 @@
 		<nav id="sidebar">
 			<div class="sidebar-header">
 
-				<img src="../assets/img/fermion.png" width=90% height=90%>
+				<img src="../assets/img/fermion.png" width=90% height=90% style="-webkit-app-region: drag;">
 			</div>
 
 			<ul class="list-unstyled components">
@@ -40,16 +38,20 @@
 
 				<ul class="list-unstyled CTAs">
 					<li>
-						<button type="button" id="FridaAttach" class="btn btn-light btn-sm btn-block btn-space">Attach</button>
+						<button type="button" id="FridaAttach"
+							class="btn btn-light btn-sm btn-block btn-space">Attach</button>
 					</li>
 					<li>
-						<button type="button" id="FridaDetach" class="btn btn-dark btn-sm btn-block btn-space">Detach</button>
+						<button type="button" id="FridaDetach"
+							class="btn btn-dark btn-sm btn-block btn-space">Detach</button>
 					</li>
 					<li>
-						<button type="button" id="FridaReload" class="btn btn-level btn-sm btn-block btn-space">Reload Script</button>
+						<button type="button" id="FridaReload" class="btn btn-level btn-sm btn-block btn-space">Reload
+							Script</button>
 					</li>
 					<li>
-						<button type="button" id="FridaProc" class="btn btn-info btn-sm btn-block btn-space">Process Info</button>
+						<button type="button" id="FridaProc" class="btn btn-info btn-sm btn-block btn-space">Process
+							Info</button>
 					</li>
 				</ul>
 		</nav>
@@ -114,7 +116,7 @@
 					</nav>
 				</div>
 
-				<div class="row CodeMirrorRow">
+				<div class="row MonacoEditorRow">
 					<section id="editor-container">
 						<div id="container" style="height:100%;overflow:visible"></div>
 					</section>
@@ -177,32 +179,32 @@
 
 			var editor = monaco.editor.create(document.getElementById('container'), {
 				value: [
-				'//-------------------------------------------//',
-				'//              Fermion v0.3                 //',
-				'//                                    ~b33f  //',
-				'//-------------------------------------------//',
-				'',
-				'// ~~ Editor ~~ //',
-				'',
-				'// + The text editor is a fully featured monaco-editor',
-				'//   |-> Linting, IntelliSense, Shortcuts (press F1)',
-				'//   |-> https://microsoft.github.io/monaco-editor/',
-				'//',
-				'// + I am trapping Ctrl-s in JS so you can save text',
-				'//   without clicking on the menu',
-				'//',
-				'// + The full Frida API is integrated in the editor',
-				'//   |-> monaco.languages.typescript.typescriptDefaults.addExtraLib(....)',
-				'//   |-> https://github.com/frida/frida-gum/blob/master/bindings/gumjs/types/frida-gum/frida-gum.d.ts',
-				'',
-				'// ~~ Frida ~~ //',
-				'',
-				'// + Please consult the JS API docs',
-				'//   |-> https://frida.re/docs/javascript-api/',
-				'//',
-				'// + To send output to the text area you have to use "send(...)"',
-				'//   |-> Not this: console.log("Hello from Frida!")',
-				'//   |-> But this: send("Hello from Frida!")'
+					'//-------------------------------------------//',
+					'//              Fermion v0.4                 //',
+					'//                                    ~b33f  //',
+					'//-------------------------------------------//',
+					'',
+					'// ~~ Editor ~~ //',
+					'',
+					'// + The text editor is a fully featured monaco-editor',
+					'//   |-> Linting, IntelliSense, Shortcuts (press F1)',
+					'//   |-> https://microsoft.github.io/monaco-editor/',
+					'//',
+					'// + I am trapping Ctrl-s in JS so you can save text',
+					'//   without clicking on the menu',
+					'//',
+					'// + The full Frida API is integrated in the editor',
+					'//   |-> monaco.languages.typescript.typescriptDefaults.addExtraLib(....)',
+					'//   |-> https://github.com/frida/frida-gum/blob/master/bindings/gumjs/types/frida-gum/frida-gum.d.ts',
+					'',
+					'// ~~ Frida ~~ //',
+					'',
+					'// + Please consult the JS API docs',
+					'//   |-> https://frida.re/docs/javascript-api/',
+					'//',
+					'// + To send output to the text area you have to use "send(...)"',
+					'//   |-> Not this: console.log("Hello from Frida!")',
+					'//   |-> But this: send("Hello from Frida!")'
 				].join('\n'),
 				language: 'typescript',
 				//theme: "vs-dark",

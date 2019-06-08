@@ -6,27 +6,50 @@ What's in a name: A fermion can be an elementary particle, such as the electron,
 
 ## How to get Fermion?
 
-You can run Fermion from source by downloading the repo and then issuing the following commands from a command prompt.
+### Run Fermion from source
+
+Download the repository and navigate to the "Fermion" folder in the terminal. Once there, set the following environment variables.
 
 ```
+# Windows
 set npm_config_runtime=electron
 set npm_config_target=5.0.0
+
+# Linux / OSX
+export npm_config_runtime=electron
+export npm_config_target=5.0.0
+```
+
+Afterwards install the packages required to run Fermion with:
+
+```
 npm install
 ```
 
-Once complete you can run Fermion with:
+Once complete, you can run Fermion by issuing:
 
 ```
 npm start
 ```
 
-You can also compile your own release package with "electron-packager" by navigating to the application folder and issuing the following command.
+### Compile a release package
+
+Complete the steps above and then issue the following command from the terminal:
 
 ```
-electron-packager . --icon assets\img\fermion.ico
+# Windows
+electron-packager . --icon assets\img\fermion-ico.ico
+
+# Linux
+electron-packager . --icon assets/img/fermion-ico.png
+
+# OSX
+electron-packager . --icon assets/img/fermion-ico.icns
 ```
 
-Alternatively you can get the latest pre-built version for x64 Windows from [releases](https://github.com/FuzzySecurity/Fermion/releases).
+### Releases
+
+You can get the latest pre-built Fermion for x64 Windows from [releases](https://github.com/FuzzySecurity/Fermion/releases).
 
 ## Eye candy
 
@@ -39,6 +62,10 @@ Fermion has auto-complete, linting and Frida API symbol definitions.
 ![Help](Images/Fermion-2.png)
 
 ## Notes
+
+### ChangeLog
+
+For more details on version specific changes consult the [changelog](https://github.com/FuzzySecurity/Fermion/blob/master/CHANGELOG.txt).
 
 ### Call to action
 

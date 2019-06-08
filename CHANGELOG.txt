@@ -1,0 +1,10 @@
+-= Fermion v0.3 =-
+
+* Initial release of Fermion.
+
+-= Fermion v0.4 =-
+
+* Code cleanup.
+* Added icons for Linux/OSX.
+* README updates.
+* Added changelog.
