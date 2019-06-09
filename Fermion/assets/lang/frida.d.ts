@@ -1503,14 +1503,28 @@ declare interface ObjectWrapper {
 
 declare type NativePointerValue = NativePointer | ObjectWrapper;
 
-declare class NativeFunction extends NativePointer {
-    constructor(address: NativePointerValue, retType: NativeType, argTypes: NativeType[], abiOrOptions?: NativeABI | NativeFunctionOptions);
+declare const NativeFunction: NativeFunctionConstructor;
+
+declare interface NativeFunctionConstructor {
+    new(address: NativePointerValue, retType: NativeType, argTypes: NativeType[], abiOrOptions?: NativeABI | NativeFunctionOptions): NativeFunction;
+    readonly prototype: NativeFunction;
+}
+
+declare interface NativeFunction extends NativePointer {
+    (...args: NativeArgumentValue[]): NativeReturnValue;
     apply(thisArg: NativePointerValue | null | undefined, args: NativeArgumentValue[]): NativeReturnValue;
     call(thisArg?: NativePointerValue | null, ...args: NativeArgumentValue[]): NativeReturnValue;
 }
 
-declare class SystemFunction extends NativePointer {
-    constructor(address: NativePointerValue, retType: NativeType, argTypes: NativeType[], abiOrOptions?: NativeABI | NativeFunctionOptions);
+declare const SystemFunction: SystemFunctionConstructor;
+
+declare interface SystemFunctionConstructor {
+    new(address: NativePointerValue, retType: NativeType, argTypes: NativeType[], abiOrOptions?: NativeABI | NativeFunctionOptions): SystemFunction;
+    readonly prototype: SystemFunction;
+}
+
+declare interface SystemFunction extends NativePointer {
+    (...args: NativeArgumentValue[]): SystemFunctionResult;
     apply(thisArg: NativePointerValue | null | undefined, args: NativeArgumentValue[]): SystemFunctionResult;
     call(thisArg?: NativePointerValue | null, ...args: NativeArgumentValue[]): SystemFunctionResult;
 }
@@ -2141,13 +2155,14 @@ declare class File {
 declare class SqliteDatabase {
     /**
      * Opens the SQLite v3 database at `path` on the filesystem. The database
-     * will be opened read-write, and the returned `SqliteDatabase` object will
-     * allow you to perform queries on it. Throws an exception if the database
-     * cannot be opened.
+     * will by default be opened read-write, and the returned `SqliteDatabase`
+     * object will allow you to perform queries on it. Throws an exception if
+     * the database cannot be opened.
      *
      * @param path Filesystem path to database.
+     * @param options Options to customize how the database should be opened.
      */
-    static open(path: string): SqliteDatabase;
+    static open(path: string, options?: SqliteOpenOptions): SqliteDatabase;
 
     /**
      * Just like `open()` but the contents of the database is provided as a
@@ -2196,6 +2211,16 @@ declare class SqliteDatabase {
      * calling `SqliteDatabase.openInline()`.
      */
     dump(): string;
+}
+
+declare interface SqliteOpenOptions {
+    flags?: SqliteOpenFlag[];
+}
+
+declare const enum SqliteOpenFlag {
+    ReadOnly = "readonly",
+    ReadWrite = "readwrite",
+    Create = "create",
 }
 
 /**
