@@ -8,3 +8,8 @@
 * Added icons for Linux/OSX.
 * README updates.
 * Added changelog.
+
+-= Fermion v0.5 =-
+
+* Update to the Frida language bindings.
+* Added an example for how to call a native function from Frida.
