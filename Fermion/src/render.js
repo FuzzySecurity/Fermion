@@ -9,9 +9,11 @@ var MutexPromise = require('mutex-promise');
 var app = require('electron').remote;
 var dialog = app.dialog;
 var fs = require('fs');
+var deviceId = 'local';
 
 // Overwrite default node.js prop to get Jquery working
 window.$ = window.jQuery = require('jquery');
+
 
 // Frida
 //////////////////////////////////////////////////
@@ -30,7 +32,8 @@ async function inject(AttachTo) {
 	process.on('SIGINT', stop);
 
 	// Attach and load script
-	session = await frida.attach(AttachTo);
+	device = await frida.getDevice(deviceId);
+	session = await device.attach(AttachTo);
 	session.detached.connect(onDetached);
 	script = await session.createScript(MonacoCodeEditor.getValue());
 
@@ -64,8 +67,8 @@ function onDetached(reason) {
 
 // Process listing
 async function getProcList() {
-	let LocalMachine = await frida.getDevice('local');
-	let Applications = await LocalMachine.enumerateProcesses();
+	let currentDevice = await frida.getDevice(deviceId);
+	let Applications = await currentDevice.enumerateProcesses();
 	return Applications;
 }
 
@@ -75,6 +78,16 @@ function appendFridaLog(data) {
 	var FridaOut = document.getElementById('FridaOut');
 	FridaOut.value += (data + "\n");
 	FridaOut.scrollTop = FridaOut.scrollHeight;
+}
+
+async function populateDeviceList(selectElement) {
+	deviceManager = frida.getDeviceManager();
+	const devices = await deviceManager.enumerateDevices();
+	devices.forEach(function(item){
+			var newOption = document.createElement("option");
+			newOption.text = item.id.toString();
+			selectElement.add(newOption);
+		});
 }
 
 document.getElementById("FridaAttach").onclick = function () {
@@ -172,12 +185,16 @@ document.getElementById("FridaProc").onclick = function () {
 		backgroundColor: '#464646',
 		webPreferences: { nodeIntegration: true }
 	})
-	ProcWin.loadURL(modalPath);
+	ProcWin.loadURL(modalPath+"?deviceId="+deviceId);
 	ProcWin.once('ready-to-show', () => {
 		ProcWin.show();
 		ProcWin.focus();
 	});
 	ProcWin.on('close', function () { ProcWin = null })
+}
+
+document.getElementById("device").onchange = function () {
+	deviceId = this.value;
 }
 
 // Menu UI hooks

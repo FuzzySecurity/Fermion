@@ -36,6 +36,12 @@
 					<input type="procName" class="form-control" id="procName" placeholder="Name">
 				</div>
 
+				<div class="form-group mx-sm-3 mb-2">
+					<label for="device">Device</label>
+					<select type="device" class="form-control" id="device">
+                   </select>
+				</div>
+
 				<ul class="list-unstyled CTAs">
 					<li>
 						<button type="button" id="FridaAttach"
@@ -218,6 +224,10 @@
 
 			// Store the editor reff as a global var
 			MonacoCodeEditor = editor;
+
+			// Populate Device list:
+			deviceSelect = document.getElementById("device");
+			populateDeviceList(deviceSelect);
 		});
 	})();
 

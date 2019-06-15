@@ -76,10 +76,14 @@
 		// Overwrite default node.js prop to get Jquery working
 		window.$ = window.jQuery = require('jquery');
 
+		// Get device currently selected
+		url = global.location;
+		deviceId = new URL(url).searchParams.get('deviceId');
+
 		// Populate poc list
 		async function getProcList() {
-			let LocalMachine = await frida.getDevice("local");
-			let Applications = await LocalMachine.enumerateProcesses();
+			let currentDevice = await frida.getDevice(deviceId);
+			let Applications = await currentDevice.enumerateProcesses();
 			return Applications;
 		}
 		getProcList().then(data => {
