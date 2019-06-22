@@ -28,6 +28,12 @@
 
 			<ul class="list-unstyled components">
 				<div class="form-group mx-sm-3 mb-2">
+					<label for="deviceName">Device</label>
+					<select type="deviceName" class="form-control" id="deviceName">
+						<option>local</option>
+					</select>
+				</div>
+				<div class="form-group mx-sm-3 mb-2">
 					<label for="procID">Process ID</label>
 					<input type="procID" class="form-control" id="procID" placeholder="ID">
 				</div>
@@ -180,7 +186,7 @@
 			var editor = monaco.editor.create(document.getElementById('container'), {
 				value: [
 					'//-------------------------------------------//',
-					'//              Fermion v0.5                 //',
+					'//              Fermion v0.6                 //',
 					'//                                    ~b33f  //',
 					'//-------------------------------------------//',
 					'',
@@ -207,7 +213,6 @@
 					'//   |-> But this: send("Hello from Frida!")'
 				].join('\n'),
 				language: 'typescript',
-				//theme: "vs-dark",
 				scrollBeyondLastLine: false,
 				automaticLayout: true
 			});
@@ -218,6 +223,14 @@
 
 			// Store the editor reff as a global var
 			MonacoCodeEditor = editor;
+
+			// Update device list
+			updateDeviceList();
+
+			// Configure interval to update device list
+			setInterval(function(){
+				updateDeviceList();
+			}, 5000);
 		});
 	})();
 

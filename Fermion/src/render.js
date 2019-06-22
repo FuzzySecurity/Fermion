@@ -22,6 +22,7 @@ let script = null;
 let session = null;
 let logMutex = new MutexPromise('48011b2b9a930ee19e26320e5adbffa2e309663c');
 let RunningLog = [];
+var deviceId = 'local';
 
 // Attach
 async function inject(AttachTo) {
@@ -30,7 +31,8 @@ async function inject(AttachTo) {
 	process.on('SIGINT', stop);
 
 	// Attach and load script
-	session = await frida.attach(AttachTo);
+	device = await frida.getDevice(deviceId);
+	session = await device.attach(AttachTo);
 	session.detached.connect(onDetached);
 	script = await session.createScript(MonacoCodeEditor.getValue());
 
@@ -64,8 +66,8 @@ function onDetached(reason) {
 
 // Process listing
 async function getProcList() {
-	let LocalMachine = await frida.getDevice('local');
-	let Applications = await LocalMachine.enumerateProcesses();
+	let currentDevice = await frida.getDevice(deviceId);
+	let Applications = await currentDevice.enumerateProcesses();
 	return Applications;
 }
 
@@ -122,6 +124,8 @@ document.getElementById("FridaAttach").onclick = function () {
 					appendFridaLog(e);
 				});
 			}
+		}).catch((err) => {
+			appendFridaLog(`[!] Error: ${err.message}`);
 		});
 
 	} else {
@@ -172,12 +176,49 @@ document.getElementById("FridaProc").onclick = function () {
 		backgroundColor: '#464646',
 		webPreferences: { nodeIntegration: true }
 	})
-	ProcWin.loadURL(modalPath);
+	ProcWin.loadURL(modalPath+"?deviceId="+deviceId);
 	ProcWin.once('ready-to-show', () => {
 		ProcWin.show();
 		ProcWin.focus();
 	});
 	ProcWin.on('close', function () { ProcWin = null })
+}
+
+async function updateDeviceList() {
+	// Get dropdown array
+	var dn = document.getElementById("deviceName");
+	var currentDevice = dn.options[deviceName.selectedIndex].value;
+	var dnArr = Array.from(dn.options).map(elem => elem.text);
+
+	// Get device array
+	var dm = frida.getDeviceManager();
+	var dev = await dm.enumerateDevices();
+	var devArr = dev.map(elem => elem.id);
+
+	// Does the current device still exist?
+	if (!devArr.includes(currentDevice)) {
+		// Local is always a valid target
+		dn.selectedIndex = 0;
+		deviceId = 'local';
+	}
+
+	// Remove stale entries from the dropdown
+	dnArr.forEach(function(elem) {
+		if (!devArr.includes(elem)) {
+			$(`#deviceName option:contains("${elem}")`).remove()
+		}
+	})
+
+	// Add new entries to the dropdown
+	devArr.forEach(function(elem) {
+		if (!dnArr.includes(elem) && elem != "tcp") {
+			$("#deviceName").append(new Option(elem))
+		}
+	})
+}
+
+document.getElementById("deviceName").onchange = function () {
+	deviceId = this.value;
 }
 
 // Menu UI hooks

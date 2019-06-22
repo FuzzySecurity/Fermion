@@ -77,3 +77,4 @@ I just want to give a few special thanks!
 
 * A huge thanks to [Ole André V. Ravnås](https://twitter.com/oleavr) for all his work on Frida and having a lot of patience answering my pedestrian questions about Frida, NodeJS and Monaco!
 * A shout-out also to [mattahan](https://www.deviantart.com/mattahan). I'm using a Buuf icon for the Windows package of Fermion. I'm sure we have all used some of his icons on NIX over the years.
+* Thanks to @lez0sec for contributing some time/code to Fermion!

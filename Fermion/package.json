@@ -1,6 +1,6 @@
 {
   "name": "fermion",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Fermion is a stand-alone Frida electron tool.",
   "main": "core.js",
   "scripts": {

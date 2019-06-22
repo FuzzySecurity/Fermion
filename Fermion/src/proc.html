@@ -16,8 +16,13 @@
 			width: 0px;
 		}
 
-		td, th {
+		p, td, th {
 			color: #ffffff !important;
+		}
+
+		p {
+			font-weight: bold;
+			padding-top: 50%;
 		}
 
 		div.barFrame {
@@ -57,7 +62,7 @@
 			</a>
 		</div>
 
-		<div class="row dataFrame">
+		<div id="DataContainer" class="row dataFrame">
 			<table id="ProcSet" class="table table-borderless table-hover table-sm">
 				<thead>
 					<tr>
@@ -69,6 +74,7 @@
 				</tbody>
 			</table>
 		</div>
+		<div id="IsError"></div>
 	</div>
 
 	<script type="text/javascript">
@@ -76,10 +82,14 @@
 		// Overwrite default node.js prop to get Jquery working
 		window.$ = window.jQuery = require('jquery');
 
+		// Get device currently selected
+		url = global.location;
+		deviceId = new URL(url).searchParams.get('deviceId');
+
 		// Populate poc list
 		async function getProcList() {
-			let LocalMachine = await frida.getDevice("local");
-			let Applications = await LocalMachine.enumerateProcesses();
+			let currentDevice = await frida.getDevice(deviceId);
+			let Applications = await currentDevice.enumerateProcesses();
 			return Applications;
 		}
 		getProcList().then(data => {
@@ -99,6 +109,12 @@
 				pid.innerHTML = data[i].pid;
 				name.innerHTML = data[i].name;
 			}
+		}).catch((err) => {
+			$("#ProcSet").remove();
+			var node = document.createElement("p");
+			var errMsg = document.createTextNode(err.message);
+			node.appendChild(errMsg);
+			document.getElementById("DataContainer").appendChild(node);
 		});
 
 		// Close window handler
