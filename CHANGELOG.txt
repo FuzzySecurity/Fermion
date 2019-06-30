@@ -13,3 +13,8 @@
 
 * Update to the Frida language bindings.
 * Added an example for how to call a native function from Frida.
+
+-= Fermion v0.6 =-
+
+* Pre-built release updated to Frida v12.6.8
+* Added support for devices in addition to the local host (eg for mobile testing)
