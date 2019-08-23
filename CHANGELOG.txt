@@ -12,9 +12,15 @@
 -= Fermion v0.5 =-
 
 * Update to the Frida language bindings.
-* Added an example for how to call a native function from Frida.
+* Added example: DllLoadBehaviour, CallNativeFunction
 
 -= Fermion v0.6 =-
 
 * Pre-built release updated to Frida v12.6.8
 * Added support for devices in addition to the local host (eg for mobile testing)
+* Added example: AmsiScanBuffer, CoGetClassObject, wnf
+
+-= Fermion v0.7 =-
+
+* Pre-built release updated to Frida v12.6.16
+* Added support allow users to launch an application instead of only being able to attach

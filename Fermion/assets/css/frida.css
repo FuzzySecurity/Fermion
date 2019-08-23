@@ -266,7 +266,10 @@ ul ul a {
 }
 
 ul.CTAs {
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 ul.CTAs a {
@@ -448,4 +451,16 @@ textarea#FridaOut {
     color: #000000;
     background-color: #ffd11a;
     border-color: #ffcc00;
+}
+
+.btn-goon {
+    color: #000000;
+    background-color: #7DDF64;
+    border-color: #4dd42b;
+}
+
+.btn-goon:hover {
+    color: #000000;
+    background-color: #4dd42b;
+    border-color: #45be27;
 }

@@ -27,39 +27,53 @@
 			</div>
 
 			<ul class="list-unstyled components">
-				<div class="form-group mx-sm-3 mb-2">
-					<label for="deviceName">Device</label>
-					<select type="deviceName" class="form-control" id="deviceName">
-						<option>local</option>
-					</select>
-				</div>
-				<div class="form-group mx-sm-3 mb-2">
-					<label for="procID">Process ID</label>
-					<input type="procID" class="form-control" id="procID" placeholder="ID">
-				</div>
-				<div class="form-group mx-sm-3 mb-2">
-					<label for="procName">Process Name</label>
-					<input type="procName" class="form-control" id="procName" placeholder="Name">
-				</div>
-
-				<ul class="list-unstyled CTAs">
-					<li>
-						<button type="button" id="FridaAttach"
-							class="btn btn-light btn-sm btn-block btn-space">Attach</button>
-					</li>
-					<li>
-						<button type="button" id="FridaDetach"
-							class="btn btn-dark btn-sm btn-block btn-space">Detach</button>
-					</li>
-					<li>
-						<button type="button" id="FridaReload" class="btn btn-level btn-sm btn-block btn-space">Reload
-							Script</button>
-					</li>
-					<li>
-						<button type="button" id="FridaProc" class="btn btn-info btn-sm btn-block btn-space">Process
-							Info</button>
-					</li>
+					<div class="form-group mx-sm-3 mb-2">
+						<label for="deviceName">Device</label>
+						<select type="deviceName" class="form-control" id="deviceName">
+							<option>local</option>
+						</select>
+					</div><br><br>
+					<div class="form-group mx-sm-3 mb-2">
+						<label for="procID">Process ID</label>
+						<input type="procID" class="form-control" id="procID" placeholder="ID">
+					</div>
+					<div class="form-group mx-sm-3 mb-2">
+						<label for="procName">Process Name</label>
+						<input type="procName" class="form-control" id="procName" placeholder="Name">
+					</div>
+				
+					<ul class="list-unstyled CTAs">
+						<li>
+							<button type="button" id="FridaAttach" class="btn btn-goon btn-sm btn-block btn-space">Attach</button>
+						</li>
+					</ul><br>
+				
+					<div class="form-group mx-sm-3 mb-2">
+						<label for="procPath">Process Path</label>
+						<input type="procPath" class="form-control" id="procPath" placeholder="Path">
+					</div>
+					<div class="form-group mx-sm-3 mb-2">
+						<label for="procArgs">Process Arguments</label>
+						<input type="procArgs" class="form-control" id="procArgs" placeholder="Args">
+					</div>
+				
+					<ul class="list-unstyled CTAs">
+						<li>
+							<button type="button" id="FridaStart" class="btn btn-goon btn-sm btn-block btn-space">Start</button>
+						</li><br><br>
+						<li>
+							<button type="button" id="FridaDetach" class="btn btn-dark btn-sm btn-block btn-space">Detach</button>
+						</li>
+						<li>
+							<button type="button" id="FridaReload" class="btn btn-level btn-sm btn-block btn-space">Reload
+								Script</button>
+						</li>
+						<li>
+							<button type="button" id="FridaProc" class="btn btn-info btn-sm btn-block btn-space">Process Info</button>
+						</li>
+					</ul>
 				</ul>
+
 		</nav>
 
 
@@ -186,7 +200,7 @@
 			var editor = monaco.editor.create(document.getElementById('container'), {
 				value: [
 					'//-------------------------------------------//',
-					'//              Fermion v0.6                 //',
+					'//              Fermion v0.7                 //',
 					'//                                    ~b33f  //',
 					'//-------------------------------------------//',
 					'',

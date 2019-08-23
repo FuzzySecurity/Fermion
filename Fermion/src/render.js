@@ -51,6 +51,43 @@ async function inject(AttachTo) {
 	await script.load();
 }
 
+// Start
+async function start(Path, Args) {
+	// Exit on process termination
+	process.on('SIGTERM', stop);
+	process.on('SIGINT', stop);
+
+	// Attach and load script
+	device = await frida.getDevice(deviceId);
+	if (!Args || 0 === Args.length) {
+		procID = await device.spawn(Path);
+	} else {
+		procID = await device.spawn([Path,Args]);
+	}
+	session = await device.attach(procID);
+	session.detached.connect(onDetached);
+	script = await session.createScript(MonacoCodeEditor.getValue());
+
+	// For performance we can't update the text area all the time
+	// it will lock the UI on big volumes of data. Instead we append
+	// to an array using a mutex and every X ms we flush the array
+	// to the text area
+	script.message.connect(message => {
+		ChangeLogExclusive(logMutex, 'Append', message.payload);
+		setTimeout(function () {
+			if (RunningLog.length > 0) {
+				ChangeLogExclusive(logMutex, 'Write', message.payload);
+			}
+		}, 500);
+	});
+
+	appendFridaLog('[+] Injecting => PID: ' + procID + ', Name: ' + Path);
+	await script.load();
+
+	device.resume(procID);
+	appendFridaLog('[+] Process start success');
+}
+
 // Stop
 function stop() {
 	script.unload();
@@ -128,6 +165,25 @@ document.getElementById("FridaAttach").onclick = function () {
 			appendFridaLog(`[!] Error: ${err.message}`);
 		});
 
+	} else {
+		appendFridaLog('[!] Already attached to a process..');
+	}
+}
+
+document.getElementById("FridaStart").onclick = function () {
+	if (session == null) {
+		appendFridaLog('[?] Attempting process start..');
+		var ProcPath = document.getElementById("procPath").value;
+		var ProcAgrs = document.getElementById("procArgs").value;
+		if (!ProcPath || 0 === ProcPath.length) {
+			appendFridaLog('[!] Process parameters not provided..');
+			return;
+		} else {
+			start(ProcPath, ProcAgrs).catch(e => {
+				appendFridaLog(e);
+				return;
+			});
+		}
 	} else {
 		appendFridaLog('[!] Already attached to a process..');
 	}

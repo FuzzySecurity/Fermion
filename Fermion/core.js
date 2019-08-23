@@ -6,7 +6,7 @@ function createWindow() {
   // Create the browser window.
   bWin = new BrowserWindow({
     width: 1000,
-    height: 850,
+    height: 900,
     frame: false,
     show: false,
     backgroundColor: '#464646',
