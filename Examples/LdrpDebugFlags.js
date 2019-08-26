@@ -6,9 +6,8 @@
 //                      !!Tested only on x64 Win10 1903!!                             //
 //------------------------------------------------------------------------------------//
 
-// function hooks
+// pFunction
 var pLdrLoadDll = Module.findExportByName('ntdll.dll', 'LdrLoadDll')
-var pDbgPrint = Module.findExportByName('ntdll.dll', 'DbgPrint')
 
 // Globals
 var iDebugOffet;
@@ -109,7 +108,6 @@ send("[?] Overwriting LdrpDebugFlags==0x9");
 pLdrpDebugFlags.writeU32(9);
 
 send("[?] Hooking..\n");
-// Hook
 Interceptor.attach(pvDbgPrintExWithPrefixInternal, {
     onEnter: function (args) {
         if (suffix != null) {
