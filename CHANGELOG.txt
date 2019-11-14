@@ -24,3 +24,4 @@
 
 * Pre-built release updated to Frida v12.6.16
 * Added support allow users to launch an application instead of only being able to attach
+* Added example: RdpThief
