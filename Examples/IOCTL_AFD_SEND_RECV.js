@@ -20,6 +20,16 @@
 //---------------
 var pNtDeviceIoControlFile = Module.findExportByName("ntdll.dll", "NtDeviceIoControlFile")
 
+// Global
+var iOffset;
+
+// Check arch for offset
+if (Process.arch == "x64") {
+    iOffset = 0x8;
+} else {
+    iOffset = 0x4;
+}
+
 Interceptor.attach(pNtDeviceIoControlFile, {
     onEnter: function (args) {
         // IOCTL_AFD_RECV - 0x12017
@@ -39,7 +49,7 @@ Interceptor.attach(pNtDeviceIoControlFile, {
     onLeave: function (retval) {
         if (this.IOCTL == 0x12017 || this.IOCTL == 0x1201F) {
             var iLength = (this.InputBuffer.readPointer()).readU32();
-            var pBuffer = ((this.InputBuffer.readPointer()).add(0x4)).readPointer();
+            var pBuffer = ((this.InputBuffer.readPointer()).add(iOffset)).readPointer();
             send("Alloc Length: " + iLength);
             send("Data: \n" + hexdump(pBuffer, {length:iLength}));
         }
