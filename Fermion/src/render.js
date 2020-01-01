@@ -280,33 +280,47 @@ document.getElementById("deviceName").onchange = function () {
 // Menu UI hooks
 //////////////////////////////////////////////////
 document.getElementById("FermionOpen").onclick = function () {
-	dialog.showOpenDialog((fileName) => {
-		if (fileName === undefined) {
-			return;
+	dialog.showOpenDialog(
+		{
+			properties: ['openFile'],
+			title: "Fermion Open File",
 		}
-		fs.readFile(fileName.toString(), 'utf-8', (err, data) => {
-			if (err) {
-				appendFridaLog("[!] Error opening file: " + err.message);
-				return;
-			}
-			MonacoCodeEditor.setValue(data);
-		});
-	});
+	).then(result => {
+		console.log("Path: " + result.filePaths);
+		if (result.filePaths.length == 0) {
+			return;
+		} else {
+			fs.readFile(result.filePaths[0], 'utf-8', (err, data) => {
+				if (err) {
+					appendFridaLog("[!] Error opening file: " + err.message);
+					return;
+				}
+				MonacoCodeEditor.setValue(data);
+			});
+		}
+	}).catch(err =>{
+		appendFridaLog("[!] Error opening file: " + err)
+	})
 }
 
 document.getElementById("FermionSave").onclick = function () {
-	dialog.showSaveDialog((fileName) => {
-		if (fileName === undefined) {
-			return;
+	dialog.showSaveDialog(
+		{
+			title: "Fermion Save File",
 		}
-		content = MonacoCodeEditor.getValue();
-		fs.writeFile(fileName, content, (err) => {
-			if (err) {
-				appendFridaLog("[!] Error saving file: " + err.message)
-				return;
-			}
-		});
-	});
+	).then(result => {
+		if (result.filePath) {
+			content = MonacoCodeEditor.getValue();
+			fs.writeFile(result.filePath, content, (err) => {
+				if (err) {
+					appendFridaLog("[!] Error saving file: " + err.message)
+					return;
+				}
+			});
+		}
+	}).catch(err =>{
+		appendFridaLog("[!] Error saving file: " + err)
+	})
 }
 
 document.getElementById("FermionDevTools").onclick = function () {
@@ -428,12 +442,20 @@ var LocalLoadLang = function (url, method) {
 	});
 };
 
-// Trap Ctrl-s / Command-s
+// Trap Ctrl/Command-s / Ctrl/Command-o
 //////////////////////////////////////////////////
 document.addEventListener("keydown", function (e) {
 	if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
 		e.preventDefault();
 		// Trigger the save function
 		document.getElementById("FermionSave").click();
+	}
+}, false);
+
+document.addEventListener("keydown", function (e) {
+	if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 79) {
+		e.preventDefault();
+		// Trigger the save function
+		document.getElementById("FermionOpen").click();
 	}
 }, false);

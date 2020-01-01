@@ -25,3 +25,10 @@
 * Pre-built release updated to Frida v12.6.16
 * Added support allow users to launch an application instead of only being able to attach
 * Added example: RdpThief, IOCTL_AFD_SEND_RECV
+
+-= Fermion v0.8 =-
+
+* Pre-built release updated to Frida v12.8.1
+* Build updated/tested for Electron v7
+* Updated language bindings: Fermion/assets/lang/frida.d.ts
+* Electron compatibility changes for showOpenDialog & showSaveDialog
