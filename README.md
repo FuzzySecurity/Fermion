@@ -61,6 +61,10 @@ Fermion has auto-complete, linting and Frida API symbol definitions.
 
 ![Help](Images/Fermion-2.png)
 
+Fermion can connect to a Frida server to debug remote applications using the device dropdown.
+
+![Server](Images/Fermion-3.png)
+
 ## Notes
 
 ### ChangeLog
