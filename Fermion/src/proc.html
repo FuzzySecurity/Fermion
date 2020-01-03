@@ -86,9 +86,34 @@
 		url = global.location;
 		deviceId = new URL(url).searchParams.get('deviceId');
 
+		// Retrieve device list
+		async function getDeviceList() {
+			var dm = await frida.getDeviceManager();
+			var dev = await dm.enumerateDevices();
+			return dev;
+		}
+
+		// There is a bug in the latest Frida, a delay in the device
+		// listing for non-default entries. All we do here is try 
+		// three times and sleep 1000ms.
+		// Reff: https://github.com/frida/frida/issues/1111
+		const sleep = (milliseconds) => {
+			return new Promise(resolve => setTimeout(resolve, milliseconds))
+		}
+
 		// Populate poc list
 		async function getProcList() {
-			let currentDevice = await frida.getDevice(deviceId);
+			// Make sure the device list has updated
+			if (atob(deviceId) != "local") {
+				for (i = 0; i < 3; i++) {
+					var dev = await getDeviceList();
+					if (dev.length > 2) {
+						break;
+					}
+					await sleep(1000);
+				}
+			}
+			let currentDevice = await frida.getDevice(atob(deviceId));
 			let Applications = await currentDevice.enumerateProcesses();
 			return Applications;
 		}

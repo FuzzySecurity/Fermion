@@ -2,6 +2,7 @@
 //////////////////////////////////////////////////
 const electron = require('electron');
 const remote = electron.remote;
+const nativeImage = electron.nativeImage;
 const BrowserWindow = remote.BrowserWindow;
 const frida = require('frida');
 const path = require('path');
@@ -23,6 +24,7 @@ let session = null;
 let logMutex = new MutexPromise('48011b2b9a930ee19e26320e5adbffa2e309663c');
 let RunningLog = [];
 var deviceId = 'local';
+var currentFilePath = null;
 
 // Attach
 async function inject(AttachTo) {
@@ -232,7 +234,7 @@ document.getElementById("FridaProc").onclick = function () {
 		backgroundColor: '#464646',
 		webPreferences: { nodeIntegration: true }
 	})
-	ProcWin.loadURL(modalPath+"?deviceId="+deviceId);
+	ProcWin.loadURL(modalPath+"?deviceId="+btoa(deviceId));
 	ProcWin.once('ready-to-show', () => {
 		ProcWin.show();
 		ProcWin.focus();
@@ -294,8 +296,13 @@ document.getElementById("FermionOpen").onclick = function () {
 				if (err) {
 					appendFridaLog("[!] Error opening file: " + err.message);
 					return;
+				} else {
+					appendFridaLog("[+] File opened..");
+					appendFridaLog("    |-> Path: " + result.filePaths[0]);
 				}
 				MonacoCodeEditor.setValue(data);
+				// Set global filepath on success
+				currentFilePath = result.filePaths[0];
 			});
 		}
 	}).catch(err =>{
@@ -315,7 +322,12 @@ document.getElementById("FermionSave").onclick = function () {
 				if (err) {
 					appendFridaLog("[!] Error saving file: " + err.message)
 					return;
+				} else {
+					appendFridaLog("[+] File saved..");
+					appendFridaLog("    |-> Path: " + result.filePath);
 				}
+				// Set global filepath on success
+				currentFilePath = result.filePath;
 			});
 		}
 	}).catch(err =>{
@@ -379,6 +391,15 @@ function setMonacoTheme() {
 		monaco.editor.setTheme("vs-dark");
 	} else if (theme == "VSCode-HighContrast") {
 		monaco.editor.setTheme("hc-black");
+	}
+}
+
+document.getElementById("FermionMonacoWrap").onclick = function () {
+	var wrapState = document.getElementById("FermionMonacoWrap");
+	if (wrapState.checked == true) {
+		MonacoCodeEditor.updateOptions({ wordWrap: "on" });
+	} else {
+		MonacoCodeEditor.updateOptions({ wordWrap: "off" });
 	}
 }
 
@@ -447,8 +468,38 @@ var LocalLoadLang = function (url, method) {
 document.addEventListener("keydown", function (e) {
 	if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
 		e.preventDefault();
-		// Trigger the save function
-		document.getElementById("FermionSave").click();
+
+		// Do we currently have a known file path?
+		if (currentFilePath == null) {
+			// Trigger the save function
+			document.getElementById("FermionSave").click();
+		} else {
+			// Overwrite known file
+			dialog.showMessageBox(
+				{
+					type: "warning",
+					buttons: ["Yes", "No"],
+					defaultId: 1,
+					title: "Save File",
+					message: "Overwrite existing file?",
+					detail: currentFilePath,
+					cancelId: 1,
+				}
+			).then(result => {
+				if (result.response == 0) {
+					content = MonacoCodeEditor.getValue();
+					fs.writeFile(currentFilePath, content, (err) => {
+						if (err) {
+							appendFridaLog("[!] Error saving file: " + err.message);
+							appendFridaLog("    |-> Path: " + currentFilePath);
+						} else {
+							appendFridaLog("[+] File saved..");
+							appendFridaLog("    |-> Path: " + currentFilePath);
+						}
+					})
+				}
+			})
+		}
 	}
 }, false);
 

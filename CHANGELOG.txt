@@ -32,3 +32,11 @@
 * Build updated/tested for Electron v7
 * Updated language bindings: Fermion/assets/lang/frida.d.ts
 * Electron compatibility changes for showOpenDialog & showSaveDialog
+
+-= Fermion v0.9 =-
+
+* Pre-built release updated to Frida v12.8.3
+* Introduced a hotfix in Fermion for a device manager bug in the latest version of Frida
+* Added a word wrap toggle
+* Modified the behavior of Ctrl/Command-s to prompt to overwrite if the user previously saved or opened a file
+* Added example: DeviceIoControl, AndroidEnumerateLoadedClasses
