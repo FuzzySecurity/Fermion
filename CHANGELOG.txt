@@ -39,4 +39,4 @@
 * Introduced a hotfix in Fermion for a device manager bug in the latest version of Frida
 * Added a word wrap toggle
 * Modified the behavior of Ctrl/Command-s to prompt to overwrite if the user previously saved or opened a file
-* Added example: DeviceIoControl, AndroidEnumerateLoadedClasses
+* Added example: DeviceIoControl, AndroidEnumerateLoadedClasses, MemSSP
