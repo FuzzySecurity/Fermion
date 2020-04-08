@@ -11,7 +11,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "electron": "^7.0.0",
-    "frida": "^12.8.0",
+    "frida": "12.8.3",
     "jquery": "^3.4.1",
     "monaco-editor": "^0.17.0",
     "mutex-promise": "^0.1.0"
