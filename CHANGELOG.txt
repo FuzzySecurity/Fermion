@@ -39,4 +39,5 @@
 * Introduced a hotfix in Fermion for a device manager bug in the latest version of Frida
 * Added a word wrap toggle
 * Modified the behavior of Ctrl/Command-s to prompt to overwrite if the user previously saved or opened a file
-* Added example: DeviceIoControl, AndroidEnumerateLoadedClasses, MemSSP
+* Locked the Frida version to v12.8.3 to avoid unexpected behaviour when people build against new versions. This can be changed in "package.json". New builds will have fixed, tested, updated version of Frida.
+* Added example: DeviceIoControl, AndroidEnumerateLoadedClasses, MemSSP, EtwEventWrite
