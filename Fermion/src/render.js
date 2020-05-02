@@ -75,10 +75,16 @@ async function start(Path, Args) {
 	// to an array using a mutex and every X ms we flush the array
 	// to the text area
 	script.message.connect(message => {
-		ChangeLogExclusive(logMutex, 'Append', message.payload);
+		var message_content;
+		if (message.type === 'send') {
+			message_content = message.payload;
+		}else{
+			message_content = message.stack;
+		}
+		ChangeLogExclusive(logMutex, 'Append', message_content);
 		setTimeout(function () {
 			if (RunningLog.length > 0) {
-				ChangeLogExclusive(logMutex, 'Write', message.payload);
+				ChangeLogExclusive(logMutex, 'Write', message_content);
 			}
 		}, 500);
 	});
@@ -207,10 +213,16 @@ document.getElementById("FridaReload").onclick = async function () {
 			script.unload();
 			script = await session.createScript(MonacoCodeEditor.getValue());
 			script.message.connect(message => {
-				ChangeLogExclusive(logMutex, 'Append', message.payload);
+				var message_content;
+				if (message.type === 'send') {
+					message_content = message.payload;
+				}else{
+					message_content = message.stack;
+				}
+				ChangeLogExclusive(logMutex, 'Append', message_content);
 				setTimeout(function () {
 					if (RunningLog.length > 0) {
-						ChangeLogExclusive(logMutex, 'Write', message.payload);
+						ChangeLogExclusive(logMutex, 'Write', message_content);
 					}
 				}, 500);
 			});
