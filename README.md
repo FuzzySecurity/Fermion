@@ -13,11 +13,11 @@ Download the repository and navigate to the "Fermion" folder in the terminal. On
 ```
 # Windows
 set npm_config_runtime=electron
-set npm_config_target=7.0.0
+set npm_config_target=8.0.0
 
 # Linux / OSX
 export npm_config_runtime=electron
-export npm_config_target=7.0.0
+export npm_config_target=8.0.0
 ```
 
 Afterwards install the packages required to run Fermion with:
@@ -75,10 +75,14 @@ For more details on version specific changes consult the [changelog](https://git
 
 If you integrate Fermion into your work-flow and find it useful I encourage you to make pull requests, submit bug reports and ask for features to improve the application. I'm not exactly a Node developer so I am sure people will find ways optimize and rework some of the components.
 
+### Roadmap
+
+* Implement a more complete device manager interface.
+
 ### Special thanks
 
 I just want to give a few special thanks!
 
 * A huge thanks to [Ole André V. Ravnås](https://twitter.com/oleavr) for all his work on Frida and having a lot of patience answering my pedestrian questions about Frida, NodeJS and Monaco!
 * A shout-out also to [mattahan](https://www.deviantart.com/mattahan). I'm using a Buuf icon for the Windows package of Fermion. I'm sure we have all used some of his icons on NIX over the years.
-* Thanks to @lez0sec for contributing some time/code to Fermion!
+* Thanks to @lez0sec & @berkayyildi for contributing some time/code to Fermion!

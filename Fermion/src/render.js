@@ -43,10 +43,14 @@ async function inject(AttachTo) {
 	// to an array using a mutex and every X ms we flush the array
 	// to the text area
 	script.message.connect(message => {
-		ChangeLogExclusive(logMutex, 'Append', message.payload);
+		if (message.type == "send") {
+			ChangeLogExclusive(logMutex, 'Append', message.payload);
+		} else {
+			ChangeLogExclusive(logMutex, 'Append', "[!] Runtime error: " + message.stack);
+		}
 		setTimeout(function () {
 			if (RunningLog.length > 0) {
-				ChangeLogExclusive(logMutex, 'Write', message.payload);
+				ChangeLogExclusive(logMutex, 'Write', null);
 			}
 		}, 500);
 	});
@@ -75,10 +79,14 @@ async function start(Path, Args) {
 	// to an array using a mutex and every X ms we flush the array
 	// to the text area
 	script.message.connect(message => {
-		ChangeLogExclusive(logMutex, 'Append', message.payload);
+		if (message.type == "send") {
+			ChangeLogExclusive(logMutex, 'Append', message.payload);
+		} else {
+			ChangeLogExclusive(logMutex, 'Append', "[!] Runtime error: " + message.stack);
+		}
 		setTimeout(function () {
 			if (RunningLog.length > 0) {
-				ChangeLogExclusive(logMutex, 'Write', message.payload);
+				ChangeLogExclusive(logMutex, 'Write', null);
 			}
 		}, 500);
 	});
@@ -207,10 +215,14 @@ document.getElementById("FridaReload").onclick = async function () {
 			script.unload();
 			script = await session.createScript(MonacoCodeEditor.getValue());
 			script.message.connect(message => {
-				ChangeLogExclusive(logMutex, 'Append', message.payload);
+				if (message.type == "send") {
+					ChangeLogExclusive(logMutex, 'Append', message.payload);
+				} else {
+					ChangeLogExclusive(logMutex, 'Append', "[!] Runtime error: " + message.stack);
+				}
 				setTimeout(function () {
 					if (RunningLog.length > 0) {
-						ChangeLogExclusive(logMutex, 'Write', message.payload);
+						ChangeLogExclusive(logMutex, 'Write', null);
 					}
 				}, 500);
 			});
@@ -269,7 +281,7 @@ async function updateDeviceList() {
 
 	// Add new entries to the dropdown
 	devArr.forEach(function(elem) {
-		if (!dnArr.includes(elem) && elem != "tcp") {
+		if (!dnArr.includes(elem) && elem != "tcp" && elem != "socket") {
 			$("#deviceName").append(new Option(elem))
 		}
 	})
