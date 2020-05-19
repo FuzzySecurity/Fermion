@@ -49,7 +49,7 @@ electron-packager . --icon assets/img/fermion-ico.icns
 
 ### Releases
 
-You can get the latest pre-built Fermion for x64 Windows from [releases](https://github.com/FuzzySecurity/Fermion/releases).
+You can get the latest pre-built Fermion for x64 Windows, Linux and OSX from [releases](https://github.com/FuzzySecurity/Fermion/releases).
 
 ## Eye candy
 
