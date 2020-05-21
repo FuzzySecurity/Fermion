@@ -48,4 +48,4 @@
 * Build updated/tested for Electron v8
 * Updated language bindings: Fermion/assets/lang/frida.d.ts
 * Added support to display runtime errors in the text area
-* Added example: CallStalker
+* Added example: CallStalker, NotepadLogger
