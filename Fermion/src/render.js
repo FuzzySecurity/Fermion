@@ -397,6 +397,24 @@ function setMonacoTheme() {
 	} else if (theme == "Solarized-Dark") {
 		monaco.editor.defineTheme("SolarizedDark", SolarizedDark);
 		monaco.editor.setTheme("SolarizedDark");
+	} else if (theme == "Solarized-Light") {
+		monaco.editor.defineTheme("SolarizedLight", SolarizedLight);
+		monaco.editor.setTheme("SolarizedLight");
+	} else if (theme == "Birds-Of-Paradise") {
+		monaco.editor.defineTheme("BirdsOfParadise", BirdsOfParadise);
+		monaco.editor.setTheme("BirdsOfParadise");
+	} else if (theme == "Clouds") {
+		monaco.editor.defineTheme("Clouds", Clouds);
+		monaco.editor.setTheme("Clouds");
+	} else if (theme == "Kuroir") {
+		monaco.editor.defineTheme("Kuroir", Kuroir);
+		monaco.editor.setTheme("Kuroir");
+	} else if (theme == "NightOwl") {
+		monaco.editor.defineTheme("NightOwl", NightOwl);
+		monaco.editor.setTheme("NightOwl");
+	} else if (theme == "Textmate") {
+		monaco.editor.defineTheme("Textmate", Textmate);
+		monaco.editor.setTheme("Textmate");
 	} else if (theme == "VSCode") {
 		monaco.editor.setTheme("vs");
 	} else if (theme == "VSCode-Dark") {
