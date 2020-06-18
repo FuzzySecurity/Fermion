@@ -55,4 +55,4 @@
 * Pre-built release updated to Frida v12.9.4
 * Build updated/tested for Electron v9
 * Added six new themes for the code editor
-* Added example: Disassemble
+* Added example: Disassemble, TranslateMessage
