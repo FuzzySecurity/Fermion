@@ -244,7 +244,7 @@ document.getElementById("FridaProc").onclick = function () {
 		frame: false,
 		resizable: false,
 		backgroundColor: '#464646',
-		webPreferences: { nodeIntegration: true }
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true }
 	})
 	ProcWin.loadURL(modalPath+"?deviceId="+btoa(deviceId));
 	ProcWin.once('ready-to-show', () => {
@@ -300,7 +300,6 @@ document.getElementById("FermionOpen").onclick = function () {
 			title: "Fermion Open File",
 		}
 	).then(result => {
-		console.log("Path: " + result.filePaths);
 		if (result.filePaths.length == 0) {
 			return;
 		} else {
@@ -361,7 +360,7 @@ document.getElementById("FermionAbout").onclick = function () {
 		show: false,
 		resizable: false,
 		backgroundColor: '#ff4757',
-		webPreferences: { nodeIntegration: true }
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true }
 	})
 	AboutWin.loadURL(modalPath);
 	AboutWin.once('ready-to-show', () => {

@@ -56,3 +56,8 @@
 * Build updated/tested for Electron v9
 * Added six new themes for the code editor
 * Added example: Disassemble, TranslateMessage, winmine_XP
+
+-= Fermion v1.2 =-
+
+* Pre-built release updated to Frida v12.10.4
+* Preparation for Electron v10 Remote deprecation
