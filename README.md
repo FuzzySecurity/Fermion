@@ -51,6 +51,13 @@ electron-packager . --icon assets/img/fermion-ico.icns
 
 You can get the latest pre-built Fermion for x64 Windows, Linux and OSX from [releases](https://github.com/FuzzySecurity/Fermion/releases).
 
+## OS specific notes
+
+### Windows
+
+  * **Q**: I need to inject a SYSTEM level process, how can I do that?
+    * **A**: You used to be able to utilize tools like psexec to run Fermion as SYSTEM however since Electron v8 this causes Fermion to freeze. What you really need is for Fermion to run as Administrator and have SeDebugPrivilege privileges. As a workaround you can launch PowerShell as Administrator and use that to launch Fermion.
+
 ## Eye candy
 
 You can see a sample of Fermion at work below.
