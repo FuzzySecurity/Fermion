@@ -5,6 +5,7 @@ let bWin
 function createWindow() {
   // Create the browser window.
   bWin = new BrowserWindow({
+    contextIsolation: false,
     width: 1000,
     height: 900,
     frame: false,

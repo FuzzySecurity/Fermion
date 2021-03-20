@@ -239,6 +239,7 @@ document.getElementById("FridaReload").onclick = async function () {
 document.getElementById("FridaProc").onclick = function () {
 	const modalPath = path.join('file://', __dirname, 'proc.html');
 	let ProcWin = new BrowserWindow({
+		contextIsolation: false,
 		width: 400,
 		height: 600,
 		frame: false,
@@ -354,6 +355,7 @@ document.getElementById("FermionDevTools").onclick = function () {
 document.getElementById("FermionAbout").onclick = function () {
 	const modalPath = path.join('file://', __dirname, 'about.html');
 	let AboutWin = new BrowserWindow({
+		contextIsolation: false,
 		width: 400,
 		height: 200,
 		frame: false,

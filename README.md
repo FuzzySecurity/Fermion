@@ -13,11 +13,11 @@ Download the repository and navigate to the "Fermion" folder in the terminal. On
 ```
 # Windows
 set npm_config_runtime=electron
-set npm_config_target=9.0.0
+set npm_config_target=11.2.0
 
 # Linux / OSX
 export npm_config_runtime=electron
-export npm_config_target=9.0.0
+export npm_config_target=11.2.0
 ```
 
 Afterwards install the packages required to run Fermion with:
@@ -49,7 +49,7 @@ electron-packager . --icon assets/img/fermion-ico.icns
 
 ### Releases
 
-You can get the latest pre-built Fermion for x64 Windows, Linux and OSX from [releases](https://github.com/FuzzySecurity/Fermion/releases).
+You can get the latest pre-built Fermion for x64 Windows and Linux from [releases](https://github.com/FuzzySecurity/Fermion/releases).
 
 ## OS specific notes
 

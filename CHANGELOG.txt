@@ -67,3 +67,11 @@
 
 * Pre-built release updated to Frida v12.11.11
 * Updated language bindings
+
+-= Fermion v1.4 =-
+
+* Pre-built release updated to Frida v14.2.13
+* Build updated/tested for Electron v11
+* Updated language bindings
+* Compatibility changes for upcoming electron contextIsolation default behavior in v12
+* Compiled package support for OSX dropped, I need to boot an old laptop every time I make a release and it's PITA.
