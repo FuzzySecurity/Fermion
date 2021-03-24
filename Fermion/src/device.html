@@ -1,0 +1,115 @@
+<html>
+
+<head>
+	<style>
+		body {
+			background-color: #ff4757 !important;
+			-webkit-app-region:drag;
+		}
+	</style>
+	<link rel="stylesheet" href="../assets/css/bootstrap.css">
+	<link rel="stylesheet" href="../assets/css/frida.css">
+	<script defer src="../assets/js/solid.js"></script>
+	<script defer src="../assets/js/fontawesome.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row"
+			style="text-align:right;display:block;padding-right:5px;padding-top:5px">
+			<a id="CloseDevice" href="#">
+				<img src="../assets/img/x.png" height="10%" width="7%" style="-webkit-app-region: no-drag;">
+			</a>
+			<img src="../assets/img/device.png" height="18%" width="35%" style="-webkit-app-region:drag;float: left;display:block;padding-left:5px;">
+		</div>
+		<div class="form-check">
+			<br /><br />
+			<input class="form-check-input" type="radio" name="selectRadios" id="selectRadios1" value="option1" style="-webkit-app-region: no-drag;" checked>
+			<label class="form-check-label" for="flexCheckChecked">Auto-Detect (Local / USB / Mobile)</label>
+			<select type="deviceName" class="form-control" id="deviceName" style="-webkit-app-region: no-drag;">
+				<option>local</option>
+			</select><br />
+		  </div>
+		  <div class="form-check">
+			<input class="form-check-input" type="radio" name="selectRadios" id="selectRadios2" value="option2" style="-webkit-app-region: no-drag;">
+			<label class="form-check-label">Remote Socket</label>
+			<div class="input-group mb-3" style="-webkit-app-region: no-drag;">
+				<input type="text" class="form-control" placeholder="IP" aria-label="IP" style="width: 45%;" id="inputIP">
+				<span class="input-group-text" style="-webkit-app-region: drag;">:</span>
+				<input type="text" class="form-control" placeholder="Port" aria-label="Port" id="inputPort">
+			  </div>
+		  </div>
+
+		  <button type="button" id="FridaUpdateDevice" class="btn btn-goon btn-sm btn-block btn-space" style="-webkit-app-region: no-drag; margin-top:30px;">Ok</button>
+	</div>
+
+	<script type="text/javascript">
+		const frida = require('frida');
+		// Overwrite default node.js prop to get Jquery working
+		window.$ = window.jQuery = require('jquery');
+
+		// Update dropdown
+		async function updateDeviceList() {
+			// Get dropdown array
+			var dn = document.getElementById("deviceName");
+			var currentDevice = dn.options[deviceName.selectedIndex].value;
+			var dnArr = Array.from(dn.options).map(elem => elem.text);
+
+			// Get device array
+			var dm = frida.getDeviceManager();
+			var dev = await dm.enumerateDevices();
+			var devArr = dev.map(elem => elem.id);
+
+			// Does the current device still exist?
+			if (!devArr.includes(currentDevice)) {
+				// Local is always a valid target
+				dn.selectedIndex = 0;
+				deviceId = 'local';
+			}
+
+			// Remove stale entries from the dropdown
+			dnArr.forEach(function(elem) {
+				if (!devArr.includes(elem)) {
+					$(`#deviceName option:contains("${elem}")`).remove()
+				}
+			})
+
+			// Add new entries to the dropdown
+			devArr.forEach(function(elem) {
+				if (!dnArr.includes(elem) && elem != "tcp" && elem != "socket") {
+					$("#deviceName").append(new Option(elem))
+				}
+			})
+		}
+
+		updateDeviceList();
+		setInterval(function(){
+			updateDeviceList();
+		}, 5000);
+
+		// Update device and close dialog
+		document.getElementById("FridaUpdateDevice").onclick = function () {
+			// New device string
+			var newDevice = null;
+
+			// Do action based on radio selector
+			if (document.getElementById("selectRadios1").checked) {
+				newDevice = document.getElementById("deviceName").value;
+			} else {
+				newDevice = "socket@" + document.getElementById("inputIP").value + ":" + document.getElementById("inputPort").value;
+			}
+
+			const ipc = require('electron').ipcRenderer;
+			ipc.send('device-selector', newDevice);
+
+			window.close();
+		}
+
+		// Close dialog, make no changes to the device
+		document.getElementById("CloseDevice").onclick = function () {
+			window.close();
+		}
+	</script>
+</body>
+
+</html>

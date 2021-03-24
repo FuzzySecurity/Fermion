@@ -29,10 +29,13 @@
 			<ul class="list-unstyled components">
 					<div class="form-group mx-sm-3 mb-2">
 						<label for="deviceName">Device</label>
-						<select type="deviceName" class="form-control" id="deviceName">
-							<option>local</option>
-						</select>
-					</div><br><br>
+						<input type="deviceName" class="form-control" id="deviceName" value="local" style="background-color:lightgray; color:black;" disabled>
+					</div>
+					<ul class="list-unstyled CTAs">
+						<li>
+						<button type="button" id="setDevice" class="btn btn-goon btn-sm btn-block btn-space">Configure</button>
+						</li>
+					</ul><br>
 					<div class="form-group mx-sm-3 mb-2">
 						<label for="procID">Process ID</label>
 						<input type="procID" class="form-control" id="procID" placeholder="ID">
@@ -211,7 +214,7 @@
 			var editor = monaco.editor.create(document.getElementById('container'), {
 				value: [
 					'//-------------------------------------------//',
-					'//              Fermion v1.4                 //',
+					'//              Fermion v1.5                 //',
 					'//                                    ~b33f  //',
 					'//-------------------------------------------//',
 					'',
@@ -224,9 +227,9 @@
 					'// + I am trapping Ctrl-s / Ctrl-o in JS so you can save',
 					'//   and open files without clicking on the menu',
 					'//',
-					'// + The full Frida API is integrated in the editor',
-					'//   |-> monaco.languages.typescript.typescriptDefaults.addExtraLib(....)',
-					'//   |-> https://www.npmjs.com/package/@types/frida-gum',
+					'// + I am trapping Ctrl-t in JS so you can reload the',
+					'//   current script in the attached target without',
+					'//   (un-collapsing &) clicking the sidebar',
 					'',
 					'// ~~ Frida ~~ //',
 					'',
@@ -248,14 +251,6 @@
 
 			// Store the editor reff as a global var
 			MonacoCodeEditor = editor;
-
-			// Update device list
-			updateDeviceList();
-
-			// Configure interval to update device list
-			setInterval(function(){
-				updateDeviceList();
-			}, 5000);
 		});
 	})();
 
@@ -263,6 +258,10 @@
 </script>
 
 <script type="text/javascript">
+
+	// Print release firda version to textarea
+	appendFridaLog("[+] Fermion v1.5 -> Frida v14.2.13");
+
 	$(document).ready(function () {
 		$('#sidebarCollapse').on('click', function () {
 			$('#sidebar').toggleClass('active');

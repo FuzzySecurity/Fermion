@@ -81,7 +81,7 @@ Fermion has auto-complete, linting and Frida API symbol definitions.
 
 ![Help](Images/Fermion-2.png)
 
-Fermion can connect to a Frida server to debug remote applications using the device dropdown.
+Fermion can connect to a Frida server to debug remote applications using the device context menu. In many cases such as with `USB` debugging or when attaching to mobile applications through emulators like `genymotion` Fermion will automatically pick up the server as available. However, it is also possible to specify a remote server using an `IP` and `Port` combination.
 
 ![Server](Images/Fermion-3.png)
 
@@ -97,7 +97,8 @@ If you integrate Fermion into your work-flow and find it useful I encourage you 
 
 ### Roadmap
 
-* Implement a more complete device manager interface.
+* ~~Implement a more complete device manager interface.~~
+* UI re-design.
 
 ### Special thanks
 

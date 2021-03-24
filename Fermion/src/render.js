@@ -123,6 +123,17 @@ async function getProcList() {
 function appendFridaLog(data) {
 	var FridaOut = document.getElementById('FridaOut');
 	FridaOut.value += (data + "\n");
+
+	// DIY garbage collection
+	// |-> If the textarea grows too large it locks up the app
+	var aFridaOut = FridaOut.value.split("\n");
+	var iMaxLen = 5000; // max line count in textarea
+	if (aFridaOut.length > iMaxLen) {
+		var iRemCount = aFridaOut.length - iMaxLen;
+		aFridaOut.splice(0, iRemCount);
+		FridaOut.value = aFridaOut.join("\n");
+	}
+
 	FridaOut.scrollTop = FridaOut.scrollHeight;
 }
 
@@ -255,42 +266,46 @@ document.getElementById("FridaProc").onclick = function () {
 	ProcWin.on('close', function () { ProcWin = null })
 }
 
-async function updateDeviceList() {
-	// Get dropdown array
-	var dn = document.getElementById("deviceName");
-	var currentDevice = dn.options[deviceName.selectedIndex].value;
-	var dnArr = Array.from(dn.options).map(elem => elem.text);
+// Handle device selector
+//////////////////////////////////////////////////
+document.getElementById("setDevice").onclick = function () {
+	const modalPath = path.join('file://', __dirname, 'device.html');
+	let ProcWin = new BrowserWindow({
+		contextIsolation: false,
+		width: 350,
+		height: 310,
+		frame: false,
+		resizable: false,
+		backgroundColor: '#464646',
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true }
+	})
+	ProcWin.loadURL(modalPath);
+	ProcWin.once('ready-to-show', () => {
+		ProcWin.show();
+		ProcWin.focus();
+	});
+	ProcWin.on('close', function () { ProcWin = null })
+}
 
-	// Get device array
-	var dm = frida.getDeviceManager();
-	var dev = await dm.enumerateDevices();
-	var devArr = dev.map(elem => elem.id);
-
-	// Does the current device still exist?
-	if (!devArr.includes(currentDevice)) {
-		// Local is always a valid target
-		dn.selectedIndex = 0;
-		deviceId = 'local';
+const ipc = require('electron').ipcRenderer;
+ipc.on('device-selector', async (event, message) => {
+	// Do we need to unregister a current remote socket?
+	if (document.getElementById("deviceName").value.startsWith("socket@")) {
+		var dm = await frida.getDeviceManager();
+		dm.removeRemoteDevice(document.getElementById("deviceName").value.split('@')[1]);
 	}
 
-	// Remove stale entries from the dropdown
-	dnArr.forEach(function(elem) {
-		if (!devArr.includes(elem)) {
-			$(`#deviceName option:contains("${elem}")`).remove()
-		}
-	})
-
-	// Add new entries to the dropdown
-	devArr.forEach(function(elem) {
-		if (!dnArr.includes(elem) && elem != "tcp" && elem != "socket") {
-			$("#deviceName").append(new Option(elem))
-		}
-	})
-}
-
-document.getElementById("deviceName").onchange = function () {
-	deviceId = this.value;
-}
+	// Do we need to register a new remote socket?
+	if (message.startsWith("socket@")) {
+		var dm = await frida.getDeviceManager();
+		var devID = await dm.addRemoteDevice(message.split('@')[1]);
+		document.getElementById("deviceName").value = devID.id;
+		deviceId = devID.id;
+	} else {
+		document.getElementById("deviceName").value = message;
+		deviceId = message;
+	}
+});
 
 // Menu UI hooks
 //////////////////////////////////////////////////
@@ -494,7 +509,7 @@ var LocalLoadLang = function (url, method) {
 	});
 };
 
-// Trap Ctrl/Command-s / Ctrl/Command-o
+// Trap Ctrl/Command-s / Ctrl/Command-o / Ctrl/Command-t
 //////////////////////////////////////////////////
 document.addEventListener("keydown", function (e) {
 	if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
@@ -539,5 +554,13 @@ document.addEventListener("keydown", function (e) {
 		e.preventDefault();
 		// Trigger the save function
 		document.getElementById("FermionOpen").click();
+	}
+}, false);
+
+document.addEventListener("keydown", function (e) {
+	if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 84) {
+		e.preventDefault();
+		// Trigger script reload
+		document.getElementById("FridaReload").click();
 	}
 }, false);

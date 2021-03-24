@@ -75,3 +75,11 @@
 * Updated language bindings
 * Compatibility changes for upcoming electron contextIsolation default behavior in v12
 * Compiled package support for OSX dropped, I need to boot an old laptop every time I make a release and it's PITA.
+
+-= Fermion v1.5 =-
+
+* Added device selection context menu, including remote socket support.
+* Added JS trap for ctrl/command-t to refresh the Frida script in the target. It is now practical to collapse side-bar and work on your code.
+* Added "GC" on the textarea. It was always a problem that high volume hooks could tank Fermion if the textarea grew too large. Fermion now limits the line count to 5000 and will delete old entries as new ones come in.
+* Changed color for the text area. I think eventually a full UI re-design will probably be in order (v2 maybe).
+* Added example: malloc

@@ -56,5 +56,6 @@ app.on('activate', () => {
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// Add listener for device selector
+const ipc = require('electron').ipcMain;
+ipc.on('device-selector', (event, message) => bWin.webContents.send('device-selector', message));

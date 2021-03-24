@@ -87,8 +87,14 @@
 		deviceId = new URL(url).searchParams.get('deviceId');
 
 		// Retrieve device list
-		async function getDeviceList() {
+		async function getDeviceList(devInst) {
 			var dm = await frida.getDeviceManager();
+			// If the device is a remote socket we need to add it
+			// manually
+			if (devInst.startsWith("socket@")) {
+				var sRemoteSocket = devInst.split('@')[1];
+				dm.addRemoteDevice(sRemoteSocket);
+			}
 			var dev = await dm.enumerateDevices();
 			return dev;
 		}
@@ -106,7 +112,7 @@
 			// Make sure the device list has updated
 			if (atob(deviceId) != "local") {
 				for (i = 0; i < 3; i++) {
-					var dev = await getDeviceList();
+					var dev = await getDeviceList(atob(deviceId));
 					if (dev.length > 2) {
 						break;
 					}
