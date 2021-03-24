@@ -51,15 +51,25 @@ electron-packager . --icon assets/img/fermion-ico.icns
 
 You can get the latest pre-built Fermion for x64 Windows and Linux from [releases](https://github.com/FuzzySecurity/Fermion/releases).
 
-## OS specific notes
+## FAQ notes
 
 ### Windows
 
   * **Q**: I need to inject a SYSTEM level process, how can I do that?
     * **A**: You used to be able to utilize tools like psexec to run Fermion as SYSTEM however since Electron v8 this causes Fermion to freeze. What you really need is for Fermion to run as Administrator and have SeDebugPrivilege privileges. As a workaround you can launch PowerShell as Administrator and use that to launch Fermion.
 
+### Linux
+
+  * **Q**: I can't attach to a running process?
+    * **A**: System restrictions may prevent you from attaching, normally you will see a message in `Fermion` to tell you what the problem is and how you can solve it. However, generally, you can run `Fermion` or the `Frida Server` as `root` or alternatively run the following command `sudo sysctl kernel.yama.ptrace_scope=0`.
+
+### General
+
   * **Q**: I want to build my own version of Fermion against a new version of Frida/Electron. How can I find out which `prebuild`’s exist currently?
     * **A**: You should have a look [here](https://github.com/frida/frida/blob/master/releng/release.py), then simply search for `do_build_command`.
+
+  * **Q**: I want to review/change/update the type definitions used in the Monaco editor, how can I do that?
+    * **A**: You should have a look [here](https://www.npmjs.com/package/@types/frida-gum), this page has all the releases for the `frida-gum` type definitions. If you want to update or change these definitions in `Fermion`, you should update the following file `Fermion/assets/lang/frida.d.ts`.
 
 ## Eye candy
 
