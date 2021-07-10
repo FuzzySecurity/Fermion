@@ -93,4 +93,4 @@
 * Disable contextIsolation for window communications
 * Bugfix for https://github.com/FuzzySecurity/Fermion/issues/12
 * Four new themes: Amy, Oceanic Next, Tomorrow Night Blue, Vibrant Ink
-* More minor UI colour changes. I still thinking of a full re-design for v2.
+* More minor UI colour changes. I'm still thinking of a full re-design for v2.
