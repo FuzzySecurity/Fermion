@@ -68,7 +68,9 @@ async function start(Path, Args) {
 	if (!Args || 0 === Args.length) {
 		procID = await device.spawn(Path);
 	} else {
-		procID = await device.spawn([Path,Args]);
+		var aBuildArgs = Args.split(" ");
+		aBuildArgs.unshift(Path)
+		procID = await device.spawn(aBuildArgs);
 	}
 	session = await device.attach(procID);
 	session.detached.connect(onDetached);
@@ -256,7 +258,7 @@ document.getElementById("FridaProc").onclick = function () {
 		frame: false,
 		resizable: false,
 		backgroundColor: '#464646',
-		webPreferences: { nodeIntegration: true, enableRemoteModule: true }
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true, contextIsolation: false }
 	})
 	ProcWin.loadURL(modalPath+"?deviceId="+btoa(deviceId));
 	ProcWin.once('ready-to-show', () => {
@@ -277,7 +279,7 @@ document.getElementById("setDevice").onclick = function () {
 		frame: false,
 		resizable: false,
 		backgroundColor: '#464646',
-		webPreferences: { nodeIntegration: true, enableRemoteModule: true }
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true, contextIsolation: false }
 	})
 	ProcWin.loadURL(modalPath);
 	ProcWin.once('ready-to-show', () => {
@@ -288,6 +290,7 @@ document.getElementById("setDevice").onclick = function () {
 }
 
 const ipc = require('electron').ipcRenderer;
+const { Console } = require('console');
 ipc.on('device-selector', async (event, message) => {
 	// Do we need to unregister a current remote socket?
 	if (document.getElementById("deviceName").value.startsWith("socket@")) {
@@ -376,8 +379,8 @@ document.getElementById("FermionAbout").onclick = function () {
 		frame: false,
 		show: false,
 		resizable: false,
-		backgroundColor: '#ff4757',
-		webPreferences: { nodeIntegration: true, enableRemoteModule: true }
+		backgroundColor: '#ee6055',
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true, contextIsolation: false }
 	})
 	AboutWin.loadURL(modalPath);
 	AboutWin.once('ready-to-show', () => {
@@ -437,6 +440,18 @@ function setMonacoTheme() {
 		monaco.editor.setTheme("vs-dark");
 	} else if (theme == "VSCode-HighContrast") {
 		monaco.editor.setTheme("hc-black");
+	} else if (theme == "Amy") {
+		monaco.editor.defineTheme("Amy", Amy);
+		monaco.editor.setTheme("Amy");
+	} else if (theme == "Oceanic Next") {
+		monaco.editor.defineTheme("Oceanic-Next", OceanicNext);
+		monaco.editor.setTheme("Oceanic-Next");
+	} else if (theme == "Tomorrow Night Blue") {
+		monaco.editor.defineTheme("Tomorrow-Night-Blue", TomorrowNightBlue);
+		monaco.editor.setTheme("Tomorrow-Night-Blue");
+	} else if (theme == "Vibrant Ink") {
+		monaco.editor.defineTheme("Vibrant-Ink", VibrantInk);
+		monaco.editor.setTheme("Vibrant-Ink");
 	}
 }
 

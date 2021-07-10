@@ -130,8 +130,11 @@
 									style="-webkit-app-region: no-drag; font-size: 0.7rem !important;"
 									id="MonacoThemeSelect" onchange="setMonacoTheme()">
 									<option>idleFingers</option>
+									<option>Tomorrow Night Blue</option>
 									<option>Cobalt</option>
+									<option>Amy</option>
 									<option>MerbivoreSoft</option>
+									<option>Vibrant Ink</option>
 									<option>Katzenmilch</option>
 									<option>Monokai</option>
 									<option>Solarized-Dark</option>
@@ -139,6 +142,7 @@
 									<option>Birds-Of-Paradise</option>
 									<option>Clouds</option>
 									<option>Kuroir</option>
+									<option>Oceanic Next</option>
 									<option>NightOwl</option>
 									<option>Textmate</option>
 									<option>VSCode</option>
@@ -214,7 +218,7 @@
 			var editor = monaco.editor.create(document.getElementById('container'), {
 				value: [
 					'//-------------------------------------------//',
-					'//              Fermion v1.5                 //',
+					'//              Fermion v1.6                 //',
 					'//                                    ~b33f  //',
 					'//-------------------------------------------//',
 					'',
@@ -260,7 +264,8 @@
 <script type="text/javascript">
 
 	// Print release firda version to textarea
-	appendFridaLog("[+] Fermion v1.5 -> Frida v14.2.13");
+	appendFridaLog("[+] Fermion v1.6 -> Frida v15.0.2");
+	appendFridaLog("    |_ https://github.com/frida/frida/releases/tag/15.0.2");
 
 	$(document).ready(function () {
 		$('#sidebarCollapse').on('click', function () {

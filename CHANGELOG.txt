@@ -82,4 +82,15 @@
 * Added JS trap for ctrl/command-t to refresh the Frida script in the target. It is now practical to collapse side-bar and work on your code.
 * Added "GC" on the textarea. It was always a problem that high volume hooks could tank Fermion if the textarea grew too large. Fermion now limits the line count to 5000 and will delete old entries as new ones come in.
 * Changed color for the text area. I think eventually a full UI re-design will probably be in order (v2 maybe).
-* Added example: malloc, readFile
+* Added example: malloc, readFile, graphviz
+
+-= Fermion v1.6 =-
+
+* Pre-built release updated to Frida v15.0.2
+* Build updated/tested for Electron v13
+* Updated language bindings
+* Fermion Bugfix for new Chrome CORS policy
+* Disable contextIsolation for window communications
+* Bugfix for https://github.com/FuzzySecurity/Fermion/issues/12
+* Four new themes: Amy, Oceanic Next, Tomorrow Night Blue, Vibrant Ink
+* More minor UI colour changes. I still thinking of a full re-design for v2.

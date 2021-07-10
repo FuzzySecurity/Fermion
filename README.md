@@ -13,11 +13,11 @@ Download the repository and navigate to the "Fermion" folder in the terminal. On
 ```
 # Windows
 set npm_config_runtime=electron
-set npm_config_target=11.2.0
+set npm_config_target=13.1.6
 
 # Linux / OSX
 export npm_config_runtime=electron
-export npm_config_target=11.2.0
+export npm_config_target=13.1.6
 ```
 
 Afterwards install the packages required to run Fermion with:

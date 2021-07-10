@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron');
+app.commandLine.appendSwitch('disable-features', 'CrossOriginOpenerPolicy');
 
 let bWin
 
@@ -13,7 +14,8 @@ function createWindow() {
     backgroundColor: '#464646',
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: false
     }
   })
 
