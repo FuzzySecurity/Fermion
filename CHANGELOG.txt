@@ -94,3 +94,10 @@
 * Bugfix for https://github.com/FuzzySecurity/Fermion/issues/12
 * Four new themes: Amy, Oceanic Next, Tomorrow Night Blue, Vibrant Ink
 * More minor UI colour changes. I'm still thinking of a full re-design for v2.
+
+-= Fermion v1.7 =-
+
+* Pre-built release updated to Frida v15.1.1
+* Updated language bindings
+* Better process information User/PID/PPID. On devices where "parameters.icons" have a type of RGBA they are drawn to a canvas inline. In my testing Ubuntu did not have icons in which case they are not drawn. The release notes for v15 say that some devices like IOS/Android now return a PNG byte array, currently those are not drawn either, PR's welcome.
+* The main UI now has a button which retrieves Device information as per the new specs in the v15 release notes.

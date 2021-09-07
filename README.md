@@ -38,13 +38,13 @@ Complete the steps above and then issue the following command from the terminal:
 
 ```
 # Windows
-electron-packager . --icon assets\img\fermion-ico.ico
+electron-packager . --icon .\assets\img\fermion-ico.ico
 
 # Linux
-electron-packager . --icon assets/img/fermion-ico.png
+electron-packager . --icon ./assets/img/fermion-ico.png
 
 # OSX
-electron-packager . --icon assets/img/fermion-ico.icns
+electron-packager . --icon ./assets/img/fermion-ico.icns
 ```
 
 ### Releases

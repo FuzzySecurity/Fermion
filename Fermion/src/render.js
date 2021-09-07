@@ -253,7 +253,7 @@ document.getElementById("FridaProc").onclick = function () {
 	const modalPath = path.join('file://', __dirname, 'proc.html');
 	let ProcWin = new BrowserWindow({
 		contextIsolation: false,
-		width: 400,
+		width: 450,
 		height: 600,
 		frame: false,
 		resizable: false,
@@ -393,6 +393,35 @@ document.getElementById("FermionAbout").onclick = function () {
 document.getElementById("FermionExit").onclick = function () {
 	var CurrWnd = remote.getCurrentWindow();
 	CurrWnd.close();
+}
+
+document.getElementById("getDeviceDetail").onclick = function () {
+	appendFridaLog("\n[>] Device --> " + deviceId);
+	frida.getDevice(deviceId).then(dev => {
+		dev.querySystemParameters().then(result => {
+			if (result.hasOwnProperty("platform")) {
+				appendFridaLog("    |_ Platform  : " + result.platform);
+			}
+			if (result.hasOwnProperty("os")) {
+				if (result.os.hasOwnProperty("version")) {
+					appendFridaLog("    |_ Version   : " + result.os.version);
+				}
+			}
+			if (result.hasOwnProperty("arch")) {
+				appendFridaLog("    |_ Arch      : " + result.arch);
+			}
+			if (result.hasOwnProperty("access")) {
+				appendFridaLog("    |_ Access    : " + result.access);
+			}
+			if (result.hasOwnProperty("name")) {
+				appendFridaLog("    |_ Host Name : " + result.name);
+			}
+		}).catch(err =>{
+			appendFridaLog("[!] Failed to enumerate device properties: " + err);
+		});
+	}).catch(err =>{
+		appendFridaLog("[!] Failed to acquire device context: " + err);
+	});
 }
 
 function setMonacoTheme() {

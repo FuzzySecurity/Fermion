@@ -8,7 +8,7 @@ function createWindow() {
   bWin = new BrowserWindow({
     contextIsolation: false,
     width: 1000,
-    height: 900,
+    height: 930,
     frame: false,
     show: false,
     backgroundColor: '#464646',
