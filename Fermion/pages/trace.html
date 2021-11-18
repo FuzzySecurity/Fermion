@@ -1,0 +1,339 @@
+<html>
+
+<head>
+	<style>
+		body {
+      background-color: #E0E1E2 !important;
+      -webkit-app-region:drag !important;
+    }
+
+		th {
+      background: #767676 !important;
+			color: white !important;
+      font-size: 12px !important;
+		}
+
+		div.barFrame {
+			user-select: none;
+			display:block;
+			position:fixed;
+			top:0;
+			width:100%;
+			height: 50px;
+		}
+
+		div.dataFrame {
+			-webkit-app-region:no-drag;
+			position:fixed;
+			top:40px;
+      margin-top: 8px; 
+      padding:4px;
+      overflow-x: hidden; 
+      overflow-x: auto; 
+      text-align:justify;
+			overflow-y:scroll;
+			height: 94vh;
+			width: 100%;
+    }
+	</style>
+	<script type="text/javascript">
+		window.$ = window.jQuery = require('jquery');
+	</script>
+	<link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+	<script src="../src/frameworks/semantic/semantic.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/screen.css">
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="barFrame">
+			<div style="background-color: #E0E1E2 !important;" class="ui top attached menu">
+				<button style="background: none;" class="ui icon button">
+					<i class="project diagram icon"></i>
+				  </button>
+				  <p style="margin-top: 12px;">Trace</p>
+				<div class="right menu">
+					<div class="ui dropdown icon item">
+						<a id="CloseDevice" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+							<span class="inline-block mr-3">
+							  <i class="x icon"></i></span>
+						  </a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="DataContainer" class="dataFrame">
+			<!--Window Content-->
+      <form style="margin-left: 5px;" class="ui form">
+        <div style="width: 400; padding: 0em 0.5em; margin-bottom: 20px;" class="fields">
+            <p>Fermion is currently connected to PID:</p>
+            <div class="twelve wide column">
+              <div class="field">
+              <input style="-webkit-app-region: no-drag; width: 380;" id="currentProcPID" type="text" value="N/A" disabled>
+              </div>
+            </div>
+          </div>
+        <h4 style="margin-top: 5px !important;" class="ui dividing header">Trace Pointer</h4>
+        <div class="two fields">
+          <div style="width: 395;" class="field">
+            <p>Input either a native pointer or a module & symbol (case sensitive) combination to trace.</p>
+            <label>Native Pointer</label>
+            <input id="tracePtr" style="-webkit-app-region: no-drag;" type="text" placeholder="0x7ffb692d4b60">
+          </div>
+        </div>
+        <div style="width: 400; padding: 0em 0.5em;" class="fields">
+          <div class="twelve wide column">
+            <div class="field">
+            <label>Module</label>
+            <input id="traceModule" style="-webkit-app-region: no-drag; width: 136;" type="text" placeholder="kernel32.dll">
+            </div>
+          </div>
+          <div style="padding: 0em 0.5em;" class="four wide column">
+            <div class="field">
+            <label>Symbol</label>
+            <input id="traceSymbol" style="-webkit-app-region: no-drag; width: 236;" type="text" placeholder="CreateFileW">
+            </div>
+          </div>
+        </div><br />
+        <div style="-webkit-app-region: no-drag;" id="traceStart" class="ui grey button">Trace</div>
+        <div style="-webkit-app-region: no-drag;" id="traceStop" class="ui grey button">Stop</div>
+        <div style="-webkit-app-region: no-drag; float: right; margin-right: 24px;" id="traceClearTable" class="ui grey button">Clear Table</div>
+      </form>
+
+      <div id="traceFail" class="ui negative message hidden">
+        You are not connected to a process.<i class="close icon"></i>
+      </div>
+
+      <div id="traceFailParam" class="ui negative message hidden">
+        Insufficient parameters provided.<i class="close icon"></i>
+      </div>
+
+      <h4 style="margin-top: 20px !important;" class="ui dividing header">Graphviz</h4>
+      <table id="TraceSet" style="font-family: monospace; border: 0px; background: #e2e2e2; margin-bottom: 12px;" class="ui striped table unstackable">
+        <thead>
+          <tr>
+            <th>Trace ID</th>
+            <th>Node Count</th>
+            <th>Trace Pointer</th>
+            <th>SVG</th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Trace ID"></td>
+              <td data-label="Node Count"></td>
+              <td data-label="Trace Pointer"></td>
+              <td data-label="SVG"></td>
+            </tr>
+          </tbody>
+      </table>
+      <!-- / Window Content-->
+		</div>
+	</div>
+
+	<script type="text/javascript">
+    const path = require('path');
+    const remote = require('@electron/remote');
+    const BrowserWindow = remote.BrowserWindow;
+    // Load GraphViz library
+    const { graphviz } = require('node-graphviz');
+
+    // Create ephemeral table vars
+    var traceCounter = 0;
+    var traceIsInitRun = true;
+    var tracerLoaded = false;
+
+    // Connect to BroadcastChannel
+    const bc = new BroadcastChannel('trace-data-send');
+    const bcSVG = new BroadcastChannel('trace-SVG');
+    
+    // Display current PID
+    var currentProcPID = window.process.argv[window.process.argv.length - 1];
+    if (currentProcPID == "null") {
+      currentProcPID = "NONE";
+    }
+    document.getElementById("currentProcPID").value = currentProcPID;
+
+		// Close dialog, make no changes to the device
+		document.getElementById("CloseDevice").onclick = function () {
+      bc.close();
+			window.close();
+		}
+
+    // Handle inline message
+    $('.message .close').on('click', function() {
+      $(this).closest('.message').transition('fade');
+    });
+
+    // Init trace request
+    document.getElementById("traceStart").onclick = function () {
+    	// Are we connected to a PID?
+      if (currentProcPID == "NONE") {
+        var errorAlert = document.getElementById("traceFail");
+        errorAlert.classList.remove("hidden");
+      }
+
+      // Did we get all params?
+      var tracePointer = document.getElementById("tracePtr").value;
+      var traceModule = document.getElementById("traceModule").value;
+      var traceSymbol = document.getElementById("traceSymbol").value;
+      if (!tracePointer || tracePointer.length == 0) {
+        if (!traceModule || traceModule.length == 0 || !traceSymbol || traceSymbol.length == 0) {
+          var errorAlert = document.getElementById("traceFailParam");
+          errorAlert.classList.remove("hidden");
+        }
+      }
+
+      // Create trace script & send to renderer
+      LocalLoadTrace('../src/tools/trace.js').then(function (data) {
+      	// Where are we tracing?
+        var pFunctionPtr = null;
+        if (tracePointer && tracePointer.length > 0) {
+          pFunctionPtr = 'var pFunctionPtr = new NativePointer(' + tracePointer + ');';
+        } else {
+          pFunctionPtr = 'var pFunctionPtr = Module.findExportByName("' + traceModule + '", "' + traceSymbol + '");';
+        }
+
+        // Send script
+        bc.postMessage(pFunctionPtr + "\n" + data.responseText);
+        tracerLoaded = true;
+      });
+    }
+
+    document.getElementById("traceStop").onclick = function () {
+      if (tracerLoaded) {
+        bc.postMessage("STOP");
+        tracerLoaded = false;
+      }
+    }
+
+    document.getElementById("traceClearTable").onclick = function () {
+      var traceTable = document.getElementById("TraceSet");
+      var rowCount = traceTable.rows.length;
+      for (var i = 1; i < rowCount; i++) {
+        traceTable.deleteRow(1);
+      }
+
+      // We do some hackery to make sure the table style is not wiped
+      var tbody = traceTable.getElementsByTagName("tbody")[0];
+      var row = tbody.insertRow();
+      var traceTableID = row.insertCell(0);
+      var traceTableNodeCount = row.insertCell(1);
+      var traceTablePtr = row.insertCell(2);
+      var traceTableSVG = row.insertCell(3);
+      traceTableID.setAttribute('data-label','Trace ID');
+      traceTableNodeCount.setAttribute('data-label','Node Count');
+      traceTablePtr.setAttribute('data-label','Trace Pointer');
+      traceTableSVG.setAttribute('data-label','SVG');
+
+      // Reset vars
+      traceCounter = 0;
+      traceIsInitRun = true;
+    }
+
+    // Trace template loader
+    var LocalLoadTrace = function (url, method) {
+    	var request = new XMLHttpRequest();
+    	return new Promise(function (resolve, reject) {
+    		request.onreadystatechange = function () {
+    			if (request.readyState !== 4) return;
+    			if (request.status >= 200 && request.status < 300) {
+    				resolve(request);
+    			} else {
+    				reject({
+    					status: request.status,
+    					statusText: request.statusText
+    				});
+    			}
+    		};
+    		request.open(method || 'GET', url, true);
+    		request.send();
+    	});
+    };
+
+    // SVG Window display
+    async function createSVGWindow(sSVGb64) {
+    	const modalPath = path.join('file://', __dirname, 'svg.html');
+    	let ProcWin = new BrowserWindow({
+    		contextIsolation: false,
+    		width: 800,
+    		height: 600,
+    		frame: false,
+    		resizable: true,
+    		show: false,
+    		backgroundColor: '#E0E1E2',
+    		webPreferences: {
+    			nodeIntegration: true,
+    			nodeIntegrationInWorker: true,
+    			enableRemoteModule: true,
+    			contextIsolation: false,
+    			webviewTag: true
+    		}
+    	})
+
+    	ProcWin.loadURL(modalPath);
+    	ProcWin.once('ready-to-show', () => {
+    		setTimeout(function () {
+          bcSVG.postMessage(sSVGb64);
+    			ProcWin.show();
+    			ProcWin.focus();
+    		}, 300);
+    	});
+    	ProcWin.on('close', function () { ProcWin = null })
+    }
+
+    // Handle return messages
+    bc.onmessage = function (message) {
+      if (message.data == null) {
+        currentProcPID = "NONE";
+        document.getElementById("currentProcPID").value = currentProcPID;
+      } else if (!isNaN(message.data)) {
+        currentProcPID = message.data;
+        document.getElementById("currentProcPID").value = currentProcPID;
+      } else {
+        var table = document.getElementById("TraceSet");
+        var row = table.insertRow(table.length);
+
+        var traceTableID = row.insertCell(0);
+        var traceTableNodeCount = row.insertCell(1);
+        var traceTablePtr = row.insertCell(2);
+        var traceTableSVG = row.insertCell(3);
+
+        traceTableID.innerHTML = "Trace-" + traceCounter;
+        traceCounter += 1;
+        traceTableID.setAttribute('data-label','Trace ID');
+
+        var tracePointer = document.getElementById("tracePtr").value;
+        var traceSymbol = document.getElementById("traceSymbol").value;
+        if (tracePointer && tracePointer.length > 0) {
+          traceTablePtr.innerHTML = tracePointer;
+        } else {
+          traceTablePtr.innerHTML = traceSymbol;
+        }
+        traceTablePtr.setAttribute('data-label','Trace Pointer');
+
+        graphviz.dot(message.data, 'svg').then((svg) => {
+          // We regex replace some things
+          svg = svg.replace(/transform=\"scale\(1 1\)/, 'transform="scale(0.5 0.5)');
+          svg = svg.replace(/fill=\"white\"/, 'fill="#E0E1E2"');
+          var iNodeCount = (svg.match(/node\d+\"/g) || []).length;
+          
+          traceTableSVG.innerHTML = "<button onclick=\"createSVGWindow('" + btoa(svg) + "');\" class=\"tiny ui grey button\">Open</button>";
+          traceTableSVG.setAttribute('data-label','SVG');
+
+          traceTableNodeCount.innerHTML = iNodeCount;
+          traceTableNodeCount.setAttribute('data-label','Node Count');
+        });
+
+        // Hacky fix for semantic-ui table bug
+        if (traceIsInitRun) {
+          document.getElementById("TraceSet").deleteRow(1);
+          traceIsInitRun = false;
+        }
+      }
+    }
+	</script>
+</body>
+
+</html>

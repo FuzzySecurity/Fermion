@@ -1,0 +1,43 @@
+.gutter {
+    background-color: #8a8a8a;
+    background-repeat: no-repeat;
+    background-position: calc(50% - 7rem);
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
+}
+
+.MonacoEditorRow {
+	height: calc(65vh - 76px);
+}
+
+textarea {
+    border: none;
+    overflow: auto;
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    resize: none !important;
+}
+
+textarea#FridaOut {
+    height:100%;
+    width: calc(100vw - 12rem);
+    overflow:visible;
+    border: 1px solid transparent;
+    color: #ffffff;
+    font-family: monospace;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    background-color: #423636;
+}
+
+textarea#FridaOut::-moz-selection { color: white; background: rgb(194, 194, 194); }
+textarea#FridaOut::selection { color: white; background: rgb(194, 194, 194); }
+
+.ui.toggle.checkbox input:checked ~ label:before {
+    background-color: #424d5c !important;
+}

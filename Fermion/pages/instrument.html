@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <style>
+            body {
+                -webkit-app-region:drag;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="background-color: #E0E1E2 !important;" class="ui top attached menu">
+          <button style="background: none;" class="ui icon button">
+            <i class="arrow alternate circle right outline icon"></i>
+            </button>
+            <p style="margin-top: 12px;">Instrument</p>
+            <div class="right menu">
+                <div class="ui dropdown icon item">
+                    <a id="CloseDevice" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                        <span class="inline-block mr-3">
+                          <i class="x icon"></i></span>
+                      </a>
+                </div>
+            </div>
+        </div>
+        <div style="height:calc(100vh - 47px); background-color: #E0E1E2 !important;" class="ui bottom attached segment">
+
+            <!--Window Content-->
+            <form class="ui form">
+                <h4 style="margin-top: 5px !important;" class="ui dividing header">Attach</h4>
+                <div style="width: 400; padding: 0em 0.5em;" class="fields">
+                  <p>Specify either the process name ( / unique substring) or the process identifier (PID). This will attach to an existing process.</p>
+                  <div class="twelve wide column" style="margin-left: 7px;">
+                    <div class="field">
+                    <label>Process</label>
+                    <input id="inputProcess" style="-webkit-app-region: no-drag; width: 265;" type="text" placeholder="process.exe">
+                    </div>
+                  </div>
+                  <div style="padding: 0em 0.5em;" class="four wide column">
+                    <div class="field">
+                    <label>PID</label>
+                    <input id="inputPID" style="-webkit-app-region: no-drag; width: 100;" type="text" placeholder="1337">
+                    </div>
+                  </div>
+                </div>
+                <div style="-webkit-app-region: no-drag; margin-top: 15px; margin-left: 7px;" id="FridaAttachProcess" class="ui grey button">Attach</div><br /><br />
+
+                <h4 style="margin-top: 5px !important;" class="ui dividing header">Start</h4>
+                <div style="width: 400; padding: 0em 0.5em;" class="fields">
+                  <p>Specify a full process path and optionally provide command line arguments. This will spawn a new process and attach to it.</p>
+                  <div class="field">
+                    <label>Path</label>
+                    <input id="inputPath" type="text" style="-webkit-app-region: no-drag;" placeholder="C:\Your\Path\here.exe">
+                  </div>
+                  <div class="field">
+                    <label>Arguments</label>
+                    <input id="inputArgs" type="text" style="-webkit-app-region: no-drag;" placeholder="--with 123 --args xyz">
+                  </div>
+                </div>
+                <div style="-webkit-app-region: no-drag; width: 84.75px; margin-top: 2px; margin-left: 7px;" id="FridaStartProcess" class="ui grey button">Start</div>
+              </form>
+            <!-- / Window Content-->
+
+        </div>
+    </body>
+    <script type="text/javascript">
+        window.$ = window.jQuery = require('jquery');
+	</script>
+    <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+    <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script type="text/javascript">
+        // Create IPC renderer
+        const ipc = require('electron').ipcRenderer;
+
+        // Attach
+        document.getElementById("FridaAttachProcess").onclick = function () {
+        	var inputProc = document.getElementById("inputProcess").value;
+            var inputPID = document.getElementById("inputPID").value;
+            var dataArray = [inputProc, inputPID];
+
+            // Pass by IPC
+			ipc.send('attach-process-shim', dataArray);
+        }
+
+        // Spawn
+        document.getElementById("FridaStartProcess").onclick = function () {
+        	var inputPath = document.getElementById("inputPath").value;
+            var inputArgs = document.getElementById("inputArgs").value;
+            var dataArray = [inputPath, inputArgs];
+
+            console.log("11111");
+            // Pass by IPC
+			ipc.send('start-process-shim', dataArray);
+        }
+
+        // Close dialog, make no changes to the device
+        document.getElementById("CloseDevice").onclick = function () {
+          	window.close();
+        }
+	</script>
+</html>

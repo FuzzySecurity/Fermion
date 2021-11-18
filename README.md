@@ -1,23 +1,24 @@
+
 # Fermion
 
 Fermion is an electron application that wraps [frida-node](https://github.com/frida/frida-node) and [monaco-editor](https://microsoft.github.io/monaco-editor/). It offers a fully integrated environment to prototype, test and refine Frida scripts through a single UI. With the integration of Monaco come all the features you would expect from Visual Studio Code: Linting, IntelliSense, keybindings, etc. In addition, Fermion has a TypeScript language definition for the Frida API so it is easy to write Frida scripts.
 
-What's in a name: A fermion can be an elementary particle, such as the electron, or it can be a composite particle, such as the proton. Fermions include all quarks and leptons, as well as all composite particles made of an odd number of these, such as all baryons and many atoms and nuclei.
+`What's in a name`: A fermion can be an elementary particle, such as the electron, or it can be a composite particle, such as the proton. Fermions include all quarks and leptons, as well as all composite particles made of an odd number of these, such as all baryons and many atoms and nuclei.
 
 ## How to get Fermion?
 
 ### Run Fermion from source
 
-Download the repository and navigate to the "Fermion" folder in the terminal. Once there, set the following environment variables.
+Download the repository and navigate to the `Fermion` folder in the terminal. Once there, set the following environment variables.
 
 ```
 # Windows
 set npm_config_runtime=electron
-set npm_config_target=13.1.6
+set npm_config_target=13.3.0
 
 # Linux / OSX
 export npm_config_runtime=electron
-export npm_config_target=13.1.6
+export npm_config_target=13.3.0
 ```
 
 Afterwards install the packages required to run Fermion with:
@@ -38,13 +39,13 @@ Complete the steps above and then issue the following command from the terminal:
 
 ```
 # Windows
-electron-packager . --icon .\assets\img\fermion-ico.ico
+electron-packager . --icon .\src\images\fermion-ico.ico
 
 # Linux
-electron-packager . --icon ./assets/img/fermion-ico.png
+electron-packager . --icon ./src/images/fermion-ico.png
 
 # OSX
-electron-packager . --icon ./assets/img/fermion-ico.icns
+electron-packager . --icon ./src/images/fermion-ico.icns
 ```
 
 ### Releases
@@ -69,21 +70,38 @@ You can get the latest pre-built Fermion for x64 Windows and Linux from [release
     * **A**: You should have a look [here](https://github.com/frida/frida/blob/master/releng/release.py), then simply search for `do_build_command`.
 
   * **Q**: I want to review/change/update the type definitions used in the Monaco editor, how can I do that?
-    * **A**: You should have a look [here](https://www.npmjs.com/package/@types/frida-gum), this page has all the releases for the `frida-gum` type definitions. If you want to update or change these definitions in `Fermion`, you should update the following file `Fermion/assets/lang/frida.d.ts`.
+    * **A**: You should have a look [here](https://www.npmjs.com/package/@types/frida-gum), this page has all the releases for the `frida-gum` type definitions. If you want to update or change these definitions in `Fermion`, you should update the following file `Fermion/src/lang/frida.d.ts`.
 
-## Eye candy
+  * **Q**: Why you no stable `trace` man (╯°□°)╯︵ ┻━┻
+    * **A**: Call tracing is resource intensive. In most cases it will work fine but if you are tracing a `hot pointer` and/or the trace is generating graphs with thousands of nodes then you will likely find that the `trace window` will lag out while it is receiving data. Also, as with any kind of tracing, it can cause process instability / crashing / freezing.
 
-You can see a sample of Fermion at work below.
+## About
+
+You can see an example of `Fermion` at work below, in this case instrumenting `kernel32!ReadFile`.
 
 ![Fermion](Images/Fermion-1.png)
 
-Fermion has auto-complete, linting and Frida API symbol definitions.
+Fermion has auto-complete, linting and Frida API symbol support.
 
 ![Help](Images/Fermion-2.png)
 
-Fermion can connect to a Frida server to debug remote applications using the device context menu. In many cases such as with `USB` debugging or when attaching to mobile applications through emulators like `genymotion` Fermion will automatically pick up the server as available. However, it is also possible to specify a remote server using an `IP` and `Port` combination.
+Fermion can connect to a Frida server to debug remote applications using the `device` context menu. In many cases such as with `USB` debugging or when attaching to mobile applications through emulators like `genymotion` Fermion will automatically pick up the server as available. However, it is also possible to specify a remote server using an `IP` and `Port` combination.
 
 ![Server](Images/Fermion-3.png)
+
+Fermion has built-in support for thread `CALL tracing`.
+
+![Trace](Images/Fermion-4.png)
+
+This may not do exactly what you expect it to. When you define either a `pointer` or `module`/`Symbol` combination the tracer will `attach` to that location and any time a `thread` executes at that place it will start tracing all `CALL` instructions that thread performs till it returns. This means that different executions can generate different graphs, it also means that you may not see everything a function is doing (e.g. if, inside the function, a different thread gets spawned).
+
+![SVG](Images/Fermion-5.png)
+
+Fermion converts these traces into a `Graphviz SVG` format using `dot` which you can then explore. This is a feature which I find useful on occasion when performing exploratory work (What does a function do? How complex is that execution?). That being said, this is a `prototype` feature which I built on top of Fermion and probably needs some more loving to be more production ready.
+
+Fermion also has built-in documentation for Frida's `JavaScript API`. Like everyone else I don't always remember how everything works and having the docs in the app obviates the need to have a browser window open.
+
+![Docs](Images/Fermion-6.png)
 
 ## Notes
 
@@ -98,7 +116,9 @@ If you integrate Fermion into your work-flow and find it useful I encourage you 
 ### Roadmap
 
 * ~~Implement a more complete device manager interface.~~
-* UI re-design.
+* ~~UI re-design.~~
+* Gauge the appetite for more native tools built on top of Fermion and add these.
+* Extend the device manager to take advantage of the new features integrated into `Frida v15.0+`.
 
 ### Special thanks
 

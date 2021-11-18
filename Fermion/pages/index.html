@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="">
+  </head>
+  <body style="-webkit-app-region:drag;">
+    <body class="antialiased bg-body text-body font-body">
+      <div class=""> 
+        <div>
+          <nav class="lg:hidden py-6 px-6 bg-gray-800"><div class="flex items-center justify-between">
+              <a class="text-2xl text-white font-semibold"><img src="../src/images/fermion.png" alt="" style="-webkit-app-region: drag;" width="NaN"></a>
+            </div>
+          </nav><div class="hidden lg:block navbar-menu relative z-50">
+            <div class="navbar-backdrop fixed lg:hidden inset-0 bg-gray-800 opacity-10"></div>
+            <nav class="fixed top-0 left-0 bottom-0 flex flex-col w-3/4 lg:w-48 sm:max-w-xs pt-6 pb-8 bg-gray-800 overflow-y-auto"><div class="flex w-full items-center px-6 pb-6 mb-6 border-gray-700">
+                <a class="text-xl text-white font-semibold"><img src="../src/images/fermion.png" alt="" style="-webkit-app-region: drag;" width="NaN"></a>
+              </div>
+              <div class="px-4 pb-6">
+                <h3 class="mb-2 text-xs uppercase text-gray-500 font-medium">Frida Tools</h3>
+                <ul style="-webkit-app-region: no-drag;" class="mb-8 text-sm font-medium">
+                  <li>
+                    <a id="FridaProc" class="flex items-center pl-3 py-3 pr-4 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="stream icon"></i></span>
+                      <span>Process List</span>
+                      <span class="inline-block ml-auto"></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="getDeviceDetail" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="tv icon"></i></span>
+                      <span>Device Info</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FermionTools" style="outline: none;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="project diagram icon"></i></span>
+                      <span>Trace</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FermionDocs" class="flex items-center pl-3 py-3 pr-4 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="book dead icon"></i></span>
+                      <span>JS Docs</span>
+                      <span class="inline-block ml-auto">
+                        </span>
+                    </a>
+                  </li>
+                </ul><h3 class="mb-2 text-xs uppercase text-gray-500 font-medium">Instrumentation</h3>
+                <ul style="-webkit-app-region: no-drag;" class="text-sm font-medium">
+                  <li>
+                    <a id="setDevice" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="pencil alternate icon"></i></span>
+                      <span>Device</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FridaAttach" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="arrow alternate circle right outline icon"></i></span>
+                      <span>Instrument</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FridaDetach" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="arrow alternate circle left outline icon"></i></span>
+                      <span>Detach</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FridaReload" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="redo alternate icon"></i></span>
+                      <span>Reload</span>
+                    </a>
+                  </li>
+                </ul><h3 class="mb-2 text-xs uppercase text-gray-500 font-medium">Options</h3>
+                <ul style="-webkit-app-region: no-drag;" class="text-sm font-medium">
+                  <li>
+                    <a id="FermionSave" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="save icon"></i></span>
+                      <span>Save</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FermionOpen" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="folder open icon"></i></span>
+                      <span>Open</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FermionDevTools" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="bug icon"></i></span>
+                      <span>Devtools</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="FermionAbout" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                      <span class="inline-block mr-3">
+                        <i class="info circle icon"></i></span>
+                      <span>About</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </nav></div>
+          <div class="mx-auto" style="margin-left: 11.5rem;">
+        <section class="py-0">
+          <div class="ui top attached menu" style="background: #e8e9e8;">
+            <div class="ui labeled input">
+              <select class="ui selection dropdown" id="MonacoThemeSelect" onchange="setMonacoTheme()" style="background:#e8e9e8; color: rgb(103 103 104); padding:0; -webkit-app-region: no-drag; margin-left:12px; font-size: 12px;">
+                <option>Kuroir</option>
+                <option>idleFingers</option>
+                <option>Tomorrow Night Blue</option>
+                <option>Cobalt</option>
+                <option>Amy</option>
+                <option>MerbivoreSoft</option>
+                <option>Vibrant Ink</option>
+                <option>Katzenmilch</option>
+                <option>Monokai</option>
+                <option>Solarized-Dark</option>
+                <option>Solarized-Light</option>
+                <option>Birds-Of-Paradise</option>
+                <option>Clouds</option>
+                <option>Oceanic Next</option>
+                <option>NightOwl</option>
+                <option>Textmate</option>
+                <option>VSCode</option>
+                <option>VSCode-Dark</option>
+                <option>VSCode-HighContrast</option>
+              </select>
+            </div>
+            <div style="-webkit-app-region: no-drag; padding-top: 8px; padding-left: 12px; font-size: 1rem;" class="inline field">
+              <div id="FermionMonacoWrap" class="tiny ui toggle checkbox">
+                <input type="checkbox" tabindex="0" class="hidden">
+                <label style="color: rgb(103 103 104);">Wrap</label>
+              </div>
+              <label></label>
+            </div>
+            <div class="right menu">
+              <button id="FermionExit" style="-webkit-app-region: no-drag; background: none;" class="ui icon button" onclick="exitFermion()">
+                <i class="sign out alternate icon"></i>
+              </button>
+            </div>
+            </div>
+              <div style="-webkit-app-region: no-drag;" class="container px-4 mx-auto">
+                <div class="split" style="width: 100vw; height: calc(100vh - 1rem - 26px);">
+                  <div id="split-0">
+                     <div id="container" style="height:100%; width: calc(100vw - 12rem); overflow:visible"></div>
+                    </div>
+                  <div id="split-1">
+                    <textarea spellcheck="false" id="FridaOut" autofocus="true"></textarea>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        </div>
+        </div>
+      </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="../src/renderer.js"></script>
+    <script defer src="../src/lang/monaco-theme.js"></script>
+    <script src="../src/frameworks/split-1.6.4.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/custom.css">
+    <link rel="stylesheet" type="text/css" href="../src/frameworks/tailwind/tailwind.min.css">
+    <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+    <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script>
+      Split(['#split-0', '#split-1'], {
+        direction: 'vertical',
+        sizes: [63, 37]
+      });
+
+      (function () {
+      const path = require('path');
+      const amdLoader = require('../node_modules/monaco-editor/min/vs/loader.js');
+      const amdRequire = amdLoader.require;
+      const amdDefine = amdLoader.require.define;
+      function uriFromPath(_path) {
+      	var pathName = path.resolve(_path).replace(/\\/g, '/');
+      	if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+      		pathName = '/' + pathName;
+      	}
+      	return encodeURI('file://' + pathName);
+      }
+      amdRequire.config({
+      	baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+      });
+      // workaround monaco-css not understanding the environment
+      self.module = undefined;
+      amdRequire(['vs/editor/editor.main'], function () {
+      	monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      		noSemanticValidation: true,
+      		noSyntaxValidation: true
+      	});
+      
+      	monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      		target: monaco.languages.typescript.ScriptTarget.Latest,
+      		allowNonTsExtensions: true,
+      		moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs
+      	});
+      
+      	// Load custom Frida Lang TypeScript defs
+      	LocalLoadLang('../src/lang/frida.d.ts').then(function (data) {
+      		monaco.languages.typescript.typescriptDefaults.addExtraLib(data.responseText, uriFromPath(path.join(__dirname, '../src/lang/frida.d.ts')));
+      	});
+      
+      	// Load monaco theme
+      	monaco.editor.defineTheme("Kuroir", Kuroir);
+      	monaco.editor.setTheme("Kuroir");
+      
+      	var editor = monaco.editor.create(document.getElementById('container'), {
+      		value: [
+      			'//                                                            ',
+      			'//   █████▒▓█████  ██▀███   ███▄ ▄███▓ ██▓ ▒█████   ███▄    █ ',
+      			'// ▓██   ▒ ▓█   ▀ ▓██ ▒ ██▒▓██▒▀█▀ ██▒▓██▒▒██▒  ██▒ ██ ▀█   █ ',
+      			'// ▒████ ░ ▒███   ▓██ ░▄█ ▒▓██    ▓██░▒██▒▒██░  ██▒▓██  ▀█ ██▒',
+      			'// ░▓█▒  ░ ▒▓█  ▄ ▒██▀▀█▄  ▒██    ▒██ ░██░▒██   ██░▓██▒  ▐▌██▒',
+      			'// ░▒█░    ░▒████▒░██▓ ▒██▒▒██▒   ░██▒░██░░ ████▓▒░▒██░   ▓██░',
+      			'//  ▒ ░    ░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░   ░  ░░▓  ░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ',
+      			'//  ░       ░ ░  ░  ░▒ ░ ▒░░  ░      ░ ▒ ░  ░ ▒ ▒░ ░ ░░   ░ ▒░',
+      			'//  ░ ░       ░     ░░    v1.8    ░    ▒ ░░ ░ ░ ▒  ░ ~b33f  ░ ',
+      			'//            ░  ░   ░            ░    ░      ░ ░           ░ ',
+      			'//',
+      			'//   -= Editor =-',
+      			'//',
+      			'// + The text editor is a fully featured monaco-editor',
+      			'//   |-> Linting, IntelliSense, Shortcuts (press F1)',
+      			'//   |-> https://microsoft.github.io/monaco-editor/',
+      			'//',
+      			'// + I am trapping Ctrl-s / Ctrl-o in JS so you can save',
+      			'//   and open files without clicking on the menu',
+      			'//',
+      			'// + I am trapping Ctrl-t in JS so you can reload the',
+      			'//   current script in the attached target',
+      			'//',
+      			'//   -= Frida =-',
+      			'//',
+      			'// + To send output to the text area you have to use "send(...)"',
+      			'//   |-> Not this: console.log("Hello from Frida!")',
+      			'//   |-> But this: send("Hello from Frida!")'
+      		].join('\n'),
+      		language: 'typescript',
+      		scrollBeyondLastLine: false,
+      		automaticLayout: true
+      	});
+      
+      	// Store the editor reff as a global var
+      	MonacoCodeEditor = editor;
+      });
+	})();
+
+    </script>
+    <script type="text/javascript">
+
+      // Print release firda version to textarea
+      appendFridaLog("[+] Fermion v1.8 -> Frida v15.1.3");
+      appendFridaLog("    |_ https://github.com/frida/frida/releases/tag/15.1.3");
+
+      // Wordwrap toggle
+      $('.ui.checkbox')
+        .checkbox()
+      ;
+    </script>
+  </body>
+</html>

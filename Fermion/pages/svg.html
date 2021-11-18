@@ -1,0 +1,148 @@
+<html>
+
+<head>
+	<style>
+		body {
+            background-color: #E0E1E2 !important;
+            -webkit-app-region:drag !important;
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: #c9cacb;
+        }
+
+		th {
+            background: #767676 !important;
+			color: white !important;
+		}
+
+		div.barFrame {
+			user-select: none;
+			display:block;
+			position:fixed;
+			top:0;
+			width:100%;
+			height: 50px;
+		}
+
+		div.dataFrame {
+			-webkit-app-region:no-drag;
+			position:fixed;
+            display: inline-block;
+			top:40px;
+        	margin-top: 8px; 
+        	padding:4px;
+        	overflow-x: scroll; 
+        	text-align:justify;
+			overflow-y:scroll;
+			height: calc(100vh - 48px);
+			width: calc(100vw);
+        }
+	</style>
+	<script type="text/javascript">
+		window.$ = window.jQuery = require('jquery');
+	</script>
+	<link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+	<script src="../src/frameworks/semantic/semantic.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="barFrame">
+			<div style="background-color: #E0E1E2 !important;" class="ui top attached menu">
+				<button style="background: none;" class="ui icon button">
+					<i class="project diagram icon"></i>
+				  </button>
+				  <p style="margin-top: 12px;">SVG Graphviz Trace</p>
+				<div class="right menu">
+					<div class="ui dropdown icon item">
+						<a id="PlusSize" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+							<span class="inline-block mr-3">
+							  <i class="plus icon"></i></span>
+						  </a>
+					</div>
+					<div class="ui dropdown icon item">
+						<a id="MinusSize" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+							<span class="inline-block mr-3">
+							  <i class="minus icon"></i></span>
+						  </a>
+					</div>
+					<div class="ui dropdown icon item">
+						<a id="CloseDevice" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+							<span class="inline-block mr-3">
+							  <i class="x icon"></i></span>
+						  </a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="DataContainer" class="dataFrame">
+			
+
+
+
+
+		</div>
+	</div>
+
+	<script type="text/javascript">
+        // B64 SVG
+        const bcSVG = new BroadcastChannel('trace-SVG');
+
+        // Populate svg
+        bcSVG.onmessage = function (message) {
+            // set content
+            let xmlSVG = document.getElementById('DataContainer');
+            xmlSVG.innerHTML = atob(message.data);
+
+            // move horizontal scroll
+            var startNode = document.getElementById("node1");
+            var domRect = startNode.getBoundingClientRect();
+            var svgContainer = document.getElementById("DataContainer");
+            svgContainer.scrollLeft = svgContainer.scrollLeft + domRect.left - 300;
+        }
+
+		// Close dialog, make no changes to the device
+		document.getElementById("CloseDevice").onclick = function () {
+            bcSVG.close();
+			window.close();
+		}
+
+		// Scale SVG
+		function round(value, precision) {
+		    var multiplier = Math.pow(10, precision || 0);
+		    return Math.round(value * multiplier) / multiplier;
+		}
+
+		document.getElementById("PlusSize").onclick = function () {
+            var oGraph = document.getElementById("graph0");
+			var sTransform = oGraph.getAttribute("transform");
+
+			// regex
+			var matchXY = sTransform.match(/scale\((\d+(|\.\d+))\s(\d+(|\.\d+))\)/);
+			var xScale = parseFloat(matchXY[1]);
+			var yScale = parseFloat(matchXY[3]);
+
+			sTransform = sTransform.replace(/scale\(\d+(|\.\d+)\s\d+(|\.\d+)\)/, "scale(" + (round(xScale + 0.1, 1)) + " " + (round(yScale + 0.1, 1)) + ")");
+			oGraph.setAttribute("transform", sTransform);
+		}
+
+		document.getElementById("MinusSize").onclick = function () {
+            var oGraph = document.getElementById("graph0");
+			var sTransform = oGraph.getAttribute("transform");
+
+			// regex
+			var matchXY = sTransform.match(/scale\((\d+(|\.\d+))\s(\d+(|\.\d+))\)/);
+			var xScale = parseFloat(matchXY[1]);
+			var yScale = parseFloat(matchXY[3]);
+
+			if (xScale != 0 && yScale != 0) {
+				sTransform = sTransform.replace(/scale\(\d+(|\.\d+)\s\d+(|\.\d+)\)/, "scale(" + (round(xScale - 0.1, 1)) + " " + (round(yScale - 0.1, 1)) + ")");
+				oGraph.setAttribute("transform", sTransform);
+			}
+		}
+	</script>
+</body>
+
+</html>

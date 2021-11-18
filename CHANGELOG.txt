@@ -101,3 +101,13 @@
 * Updated language bindings
 * Better process information User/PID/PPID. On devices where "parameters.icons" have a type of RGBA they are drawn to a canvas inline. In my testing Ubuntu did not have icons in which case they are not drawn. The release notes for v15 say that some devices like IOS/Android now return a PNG byte array, currently those are not drawn either, PR's welcome.
 * The main UI now has a button which retrieves Device information as per the new specs in the v15 release notes.
+
+-= Fermion v1.8 =-
+
+* Pre-built release updated to Frida v15.1.3. We are a few builds behind current (v15.1.11) this is because some Electron v15 compat changes need to be made before upgrading. The next release will have the current build.
+* Full UI redesign
+* Many many UI QOL changes (movable horizontal bar on the main window anyone :D)
+* Added Frida JS API docs into Fermion
+* Added an app-native CALL tracer into Fermion
+* Got rid of Electron remote due to deprecation
+* Some preparation to migrate to Electron v15.x though currently still on v13.x

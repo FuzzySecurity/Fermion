@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <style>
+            body {
+                -webkit-app-region:drag;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="background-color: #E0E1E2 !important;" class="ui top attached menu">
+            <button style="background: none;" class="ui icon button">
+                <i class="info circle icon"></i>
+              </button>
+            <div class="right menu">
+                <div class="ui dropdown icon item">
+                    <a id="CloseDevice" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                        <span class="inline-block mr-3">
+                          <i class="x icon"></i></span>
+                      </a>
+                </div>
+            </div>
+        </div>
+        <div style="height:calc(100vh - 42px); background-color: #E0E1E2 !important;" class="ui bottom attached segment">
+
+            <!--Window Content-->
+            <div class="row" style="margin-left:0px;">
+                <img src="../src/images/fermion-alt.png">
+                <img style="padding-bottom: 15px; padding-left: 20px;" src="../src/images/version.png" style="margin-left:20px;margin-top:40px">
+            </div>
+            <div class="row" style="margin-left:0px;text-align:center;display:block">
+                <br />
+                <img src="../src/images/b33f.png">
+                <img style="padding-bottom: 15px;" src="../src/images/arrow.png">
+                <a id="OpenGitHub" href="#">
+                    <img src="../src/images/github.png" style="-webkit-app-region: no-drag;">
+                </a>
+            </div>
+            <!-- / Window Content-->
+
+        </div>
+    </body>
+    <script type="text/javascript">
+        window.$ = window.jQuery = require('jquery');
+	</script>
+    <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+    <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script type="text/javascript">
+        // Close dialog
+	    document.getElementById("CloseDevice").onclick = function () {
+	    	window.close();
+	    }
+
+        // Visit GitHub
+        document.getElementById("OpenGitHub").onclick = function () {
+	    	require("electron").shell.openExternal("https://github.com/FuzzySecurity/Fermion");
+	    }
+	</script>
+</html>

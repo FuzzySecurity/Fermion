@@ -1,0 +1,252 @@
+<html>
+
+<head>
+	<style>
+		body {
+            background-color: #E0E1E2 !important;
+            -webkit-app-region:drag !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px !important;
+        }
+
+		th {
+            background: #767676 !important;
+			color: white !important;
+		}
+
+		div.barFrame {
+			user-select: none;
+			display:block;
+			position:fixed;
+			top:0;
+			width:100%;
+			height: 50px;
+		}
+
+		div.dataFrame {
+			-webkit-app-region:no-drag;
+			position:fixed;
+			top:40px;
+        	margin-top: 8px; 
+        	padding:4px;
+        	overflow-x: hidden; 
+        	overflow-x: auto; 
+        	text-align:justify;
+			overflow-y:scroll;
+			height: 94vh;
+			width: 100%;
+        }
+	</style>
+	<script type="text/javascript">
+		const frida = require('frida');
+		window.$ = window.jQuery = require('jquery');
+	</script>
+	<link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+	<script src="../src/frameworks/semantic/semantic.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="barFrame">
+			<div style="background-color: #E0E1E2 !important;" class="ui top attached menu">
+				<button style="background: none;" class="ui icon button">
+					<i class="stream icon"></i>
+				  </button>
+				  <p style="margin-top: 12px;">Process List</p>
+				<div class="right menu">
+					<div class="ui dropdown icon item">
+						<a id="CloseDevice" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+							<span class="inline-block mr-3">
+							  <i class="x icon"></i></span>
+						  </a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="DataContainer" class="dataFrame">
+			<table id="ProcSet" style="font-family: monospace; font-size: 12px; border: 0px; background: #e2e2e2; margin-bottom: 12px;" class="ui striped table unstackable">
+				<thead>
+					<tr>
+					  <th>Icon</th>
+					  <th>User</th>
+					  <th>PID</th>
+					  <th>PPID</th>
+					  <th>Process</th>
+					  <th>Attach</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					  <tr>
+						  <td data-label="Icon"></td>
+						  <td data-label="User"></td>
+						  <td data-label="PID"></td>
+						  <td data-label="PPID"></td>
+						  <td data-label="Process"></td>
+						  <td data-label="Attach"></td>
+					  </tr>
+				  </tbody>
+			</table>
+		</div>
+		<div id="IsError"></div>
+	</div>
+
+	<script type="text/javascript">
+        // Create IPC renderer
+        const ipc = require('electron').ipcRenderer;
+
+        // Device ID
+        var deviceId = window.process.argv[window.process.argv.length - 1];
+
+        // Retrieve device list
+		async function getDeviceList(devInst) {
+			var dm = await frida.getDeviceManager();
+			// If the device is a remote socket we need to add it
+			// manually
+			if (devInst.startsWith("socket@")) {
+				var sRemoteSocket = devInst.split('@')[1];
+				dm.addRemoteDevice(sRemoteSocket);
+			}
+			var dev = await dm.enumerateDevices();
+			return dev;
+		}
+
+        // There is a bug in the latest Frida, a delay in the device
+		// listing for non-default entries. All we do here is try 
+		// three times and sleep 1000ms.
+		// Reff: https://github.com/frida/frida/issues/1111
+		const sleep = (milliseconds) => {
+			return new Promise(resolve => setTimeout(resolve, milliseconds))
+		}
+
+        // Populate poc list
+		async function getProcList() {
+			// Make sure the device list has updated
+			if (deviceId != "local") {
+				for (i = 0; i < 3; i++) {
+					var dev = await getDeviceList(deviceId);
+					if (dev.length > 2) {
+						break;
+					}
+					await sleep(1000);
+				}
+			}
+			let currentDevice = await frida.getDevice(deviceId);
+			let Applications = await currentDevice.enumerateProcesses({scope:"full"});
+			return Applications;
+		}
+		getProcList().then(data => {
+			// Insert separator
+			var table = document.getElementById("ProcSet");
+			// Sort array
+			data.sort((a, b) => (a.pid > b.pid) ? 1 : -1)
+
+			// Did we re-write the table?
+			var rewroteTable = false;
+
+			// Populate table
+			for (var i = 0; i < data.length; i++) {
+				var table = document.getElementById("ProcSet");
+
+				// Do we have icons to render?
+				if (!data[i].parameters.hasOwnProperty("icons")) {
+					if (!rewroteTable) {
+						// We don't so re-write table
+						var rows = table.rows;
+						rows[0].deleteCell(0);
+						rows[1].deleteCell(0);
+
+						// Mark as finished
+						rewroteTable = true;
+					}
+				} else {
+					// Do we support the icon?
+					if (data[i].parameters.icons[0].format != "rgba") {
+						// We don't so re-write table
+						var rows = table.rows;
+						rows[0].deleteCell(0);
+						rows[1].deleteCell(0);
+
+						// Mark as finished
+						rewroteTable = true;
+					}
+				}
+
+				var row = table.insertRow(table.length);
+
+				if (!rewroteTable) {
+                    var icon = row.insertCell(0);
+                    icon.innerHTML = '<canvas id="CANVAS-Ico-' + data[i].pid + '" width="32" height="18"></canvas>';
+                    icon.setAttribute('data-label','Icon');
+					var user = row.insertCell(1);
+					var pid = row.insertCell(2);
+					var ppid = row.insertCell(3);
+					var name = row.insertCell(4);
+                    var attach = row.insertCell(5);
+					makeIconCanvas(data[i]);
+				} else {
+					var user = row.insertCell(0);
+					var pid = row.insertCell(1);
+					var ppid = row.insertCell(2);
+					var name = row.insertCell(3);
+                    var attach = row.insertCell(4);
+				}
+
+				user.innerHTML = data[i].parameters.user;
+                user.setAttribute('data-label','User');
+				ppid.innerHTML = data[i].parameters.ppid;
+                ppid.setAttribute('data-label','PPID');
+				pid.innerHTML = data[i].pid;
+                pid.setAttribute('data-label','PID');
+				name.innerHTML = data[i].name;
+                name.setAttribute('data-label','Process');
+				name.setAttribute('style', 'word-wrap: break-word; max-width: 240px;');
+                attach.innerHTML = '<button onclick="attachProcess(' + data[i].pid + ')" class="tiny ui grey button">Attach</button>';
+			}
+
+            // Hacky fix for semantic-ui table bug
+            document.getElementById("ProcSet").deleteRow(1);
+
+		}).catch((err) => {
+			$("#ProcSet").remove();
+			var node = document.createElement("p");
+			var errMsg = document.createTextNode(err.message);
+			node.appendChild(errMsg);
+			document.getElementById("DataContainer").appendChild(node);
+		});
+
+		// Canvas generator
+		function makeIconCanvas(data) {
+			try {
+				var uint8RGBA = data.parameters.icons[0].image;
+				var c = document.getElementById("CANVAS-Ico-" + data.pid);
+				var ctx = c.getContext("2d");
+				var imgData = ctx.createImageData(16, 16);
+				
+				for (var i = 0; i < imgData.data.length; i += 4) {
+				  imgData.data[i+0] = uint8RGBA[i+0];
+				  imgData.data[i+1] = uint8RGBA[i+1];
+				  imgData.data[i+2] = uint8RGBA[i+2];
+				  imgData.data[i+3] = uint8RGBA[i+3];
+				}
+
+				ctx.putImageData(imgData, 0, 0);
+			} catch { }
+		}
+
+        // Pass by IPC to main which process to attach
+        function attachProcess(pid) {
+            // Pass PID by IPC to attach
+			ipc.send('attach-process', pid);
+        }
+
+		// Close dialog, make no changes to the device
+		document.getElementById("CloseDevice").onclick = function () {
+			window.close();
+		}
+	</script>
+</body>
+
+</html>

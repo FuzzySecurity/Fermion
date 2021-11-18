@@ -1,0 +1,147 @@
+<html>
+    <head>
+        <style>
+            body {
+                -webkit-app-region:drag;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="background-color: #E0E1E2 !important;" class="ui top attached menu">
+          <button style="background: none;" class="ui icon button">
+            <i class="pencil alternate icon"></i>
+            </button>
+            <p style="margin-top: 12px;">Device</p>
+            <div class="right menu">
+                <div class="ui dropdown icon item">
+                    <a id="CloseDevice" style="-webkit-app-region: no-drag; color: #676768;" class="flex items-center pl-3 py-3 pr-2 text-gray-50 hover:bg-gray-100 rounded" href="#">
+                        <span class="inline-block mr-3">
+                          <i class="x icon"></i></span>
+                      </a>
+                </div>
+            </div>
+        </div>
+        <div style="height:calc(100vh - 47px); background-color: #E0E1E2 !important;" class="ui bottom attached segment">
+
+            <!--Window Content-->
+            <form class="ui form">
+                <h4 class="ui dividing header">Current Device</h4>
+                <div style="width: 400; padding: 0em 0.5em; margin-bottom: 20px;" class="fields">
+                    <p>The currently selected Frida device is shown below.</p>
+                    <div class="twelve wide column">
+                      <div class="field">
+                      <label>Device</label>
+                      <input style="-webkit-app-region: no-drag; width: 380;" id="currentDeviceName" type="text" value="N/A" disabled>
+                      </div>
+                    </div>
+                  </div>
+                <h4 style="margin-top: 5px !important;" class="ui dividing header">Auto-Detect</h4>
+                <div class="two fields">
+                  <div style="width: 395;" class="field">
+                    <p>Auto-detect accessible devices such as the local host or a device connected over USB.</p>
+                    <label>Local / USB / Mobile</label>
+                    <select style="-webkit-app-region: no-drag;" id="deviceName" class="ui fluid dropdown">
+                      <option>local</option>
+                    </select>
+                  </div>
+                </div>
+                <h4 style="margin-top: 5px !important;" class="ui dividing header">Remote Socket</h4>
+                <div style="width: 400; padding: 0em 0.5em;" class="fields">
+                  <p>Specify a remote host/port which exposes a Frida server. This server must match the Frida version in Fermion.</p>
+                  <div class="twelve wide column">
+                    <div class="field">
+                    <label>IP</label>
+                    <input id="inputIP" style="-webkit-app-region: no-drag; width: 272;" type="text" placeholder="0.0.0.0">
+                    </div>
+                  </div>
+                  <div style="padding: 0em 0.5em;" class="four wide column">
+                    <div class="field">
+                    <label>Port</label>
+                    <input id="inputPort" style="-webkit-app-region: no-drag; width: 100;" type="text" placeholder="1337">
+                    </div>
+                  </div>
+                </div><br />
+                <div style="-webkit-app-region: no-drag;" id="FridaUpdateDevice" class="ui grey button">Set Device</div>
+              </form>
+            <!-- / Window Content-->
+
+        </div>
+    </body>
+    <script type="text/javascript">
+        const frida = require('frida');
+        window.$ = window.jQuery = require('jquery');
+	</script>
+    <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
+    <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script type="text/javascript">
+      // Set current device in form
+      document.getElementById("currentDeviceName").value = window.process.argv[window.process.argv.length - 1];
+
+      // Create IPC renderer
+      const ipc = require('electron').ipcRenderer;
+
+		  // Close dialog, make no changes to the device
+		  document.getElementById("CloseDevice").onclick = function () {
+		  	window.close();
+		  }
+
+      // Update dropdown
+		  async function updateDeviceList() {
+			// Get dropdown array
+			var dn = document.getElementById("deviceName");
+			var currentDevice = dn.options[deviceName.selectedIndex].value;
+			var dnArr = Array.from(dn.options).map(elem => elem.text);
+
+			// Get device array
+			var dm = frida.getDeviceManager();
+			var dev = await dm.enumerateDevices();
+			var devArr = dev.map(elem => elem.id);
+
+			// Does the current device still exist?
+			if (!devArr.includes(currentDevice)) {
+				// Local is always a valid target
+				dn.selectedIndex = 0;
+				deviceId = 'local';
+			}
+
+			// Remove stale entries from the dropdown
+			dnArr.forEach(function(elem) {
+				if (!devArr.includes(elem)) {
+					$(`#deviceName option:contains("${elem}")`).remove()
+				}
+			})
+
+			// Add new entries to the dropdown
+			devArr.forEach(function(elem) {
+				if (!dnArr.includes(elem) && elem != "tcp" && elem != "socket") {
+					$("#deviceName").append(new Option(elem))
+				}
+			})
+		}
+
+    // Poll new devices every 5 seconds
+		updateDeviceList();
+		setInterval(function(){
+			updateDeviceList();
+		}, 5000);
+
+    // Update device and close dialog
+		document.getElementById("FridaUpdateDevice").onclick = function () {
+			// New device string
+			var newDevice = null;
+
+      // Which selector are we submitting?
+      if (document.getElementById("inputIP").value && document.getElementById("inputPort").value) {
+          newDevice = "socket@" + document.getElementById("inputIP").value + ":" + document.getElementById("inputPort").value;
+      } else {
+          newDevice = document.getElementById("deviceName").value;
+      }
+
+      // Pass by IPC
+			ipc.send('new-device', newDevice);
+
+      // Close window
+			window.close();
+		}
+	</script>
+</html>
