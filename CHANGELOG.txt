@@ -111,3 +111,7 @@
 * Added an app-native CALL tracer into Fermion
 * Got rid of Electron remote due to deprecation
 * Some preparation to migrate to Electron v15.x though currently still on v13.x
+
+-= Fermion v1.8.1 =-
+
+* Minor release to bugfix #15

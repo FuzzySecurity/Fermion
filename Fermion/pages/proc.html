@@ -138,8 +138,9 @@
 			return Applications;
 		}
 		getProcList().then(data => {
-			// Insert separator
+			// Get table reff
 			var table = document.getElementById("ProcSet");
+
 			// Sort array
 			data.sort((a, b) => (a.pid > b.pid) ? 1 : -1)
 
@@ -148,51 +149,31 @@
 
 			// Populate table
 			for (var i = 0; i < data.length; i++) {
-				var table = document.getElementById("ProcSet");
-
-				// Do we have icons to render?
-				if (!data[i].parameters.hasOwnProperty("icons")) {
-					if (!rewroteTable) {
-						// We don't so re-write table
-						var rows = table.rows;
-						rows[0].deleteCell(0);
-						rows[1].deleteCell(0);
-
-						// Mark as finished
-						rewroteTable = true;
-					}
-				} else {
-					// Do we support the icon?
-					if (data[i].parameters.icons[0].format != "rgba") {
-						// We don't so re-write table
-						var rows = table.rows;
-						rows[0].deleteCell(0);
-						rows[1].deleteCell(0);
-
-						// Mark as finished
-						rewroteTable = true;
-					}
-				}
-
 				var row = table.insertRow(table.length);
 
-				if (!rewroteTable) {
-                    var icon = row.insertCell(0);
-                    icon.innerHTML = '<canvas id="CANVAS-Ico-' + data[i].pid + '" width="32" height="18"></canvas>';
-                    icon.setAttribute('data-label','Icon');
-					var user = row.insertCell(1);
-					var pid = row.insertCell(2);
-					var ppid = row.insertCell(3);
-					var name = row.insertCell(4);
-                    var attach = row.insertCell(5);
-					makeIconCanvas(data[i]);
+				// Create cells
+				var icon = row.insertCell(0);
+				var user = row.insertCell(1);
+				var pid = row.insertCell(2);
+				var ppid = row.insertCell(3);
+				var name = row.insertCell(4);
+                var attach = row.insertCell(5);
+
+				// Do we render an icon
+				if (data[i].parameters.hasOwnProperty("icons")) {
+					if (data[i].parameters.icons[0].format == "rgba") {
+						icon.innerHTML = '<canvas id="CANVAS-Ico-' + data[i].pid + '" width="20" height="20"></canvas>';
+						makeIconCanvas(data[i]);
+					} else if (data[i].parameters.icons[0].format == "png") {
+						var sPNG = makeb64PNG(data[i]);
+						icon.innerHTML = '<img src="data:image/png;base64, ' + sPNG + '" width="20" height="20"/>';
+					} else {
+						icon.innerHTML = 'None';
+					}
 				} else {
-					var user = row.insertCell(0);
-					var pid = row.insertCell(1);
-					var ppid = row.insertCell(2);
-					var name = row.insertCell(3);
-                    var attach = row.insertCell(4);
+					icon.innerHTML = 'None';
 				}
+                icon.setAttribute('data-label','Icon');
 
 				user.innerHTML = data[i].parameters.user;
                 user.setAttribute('data-label','User');
@@ -202,7 +183,7 @@
                 pid.setAttribute('data-label','PID');
 				name.innerHTML = data[i].name;
                 name.setAttribute('data-label','Process');
-				name.setAttribute('style', 'word-wrap: break-word; max-width: 240px;');
+				name.setAttribute('style', 'word-wrap: break-word; max-width: 200px;');
                 attach.innerHTML = '<button onclick="attachProcess(' + data[i].pid + ')" class="tiny ui grey button">Attach</button>';
 			}
 
@@ -217,7 +198,13 @@
 			document.getElementById("DataContainer").appendChild(node);
 		});
 
-		// Canvas generator
+		// PNG b64 generator
+		function makeb64PNG(data) {
+			var uint8PNG = data.parameters.icons[0].image;
+			return btoa(String.fromCharCode.apply(null, uint8PNG));
+		}
+
+		// RGBA Canvas generator
 		function makeIconCanvas(data) {
 			try {
 				var uint8RGBA = data.parameters.icons[0].image;

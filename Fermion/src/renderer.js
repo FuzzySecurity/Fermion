@@ -735,23 +735,24 @@ document.getElementById("FermionSave").onclick = function () {
 document.getElementById("getDeviceDetail").onclick = function () {
 	appendFridaLog("\n[>] Device --> " + deviceId);
 	frida.getDevice(deviceId).then(dev => {
+		appendFridaLog("    |_ Device Name : " + dev.name);
 		dev.querySystemParameters().then(result => {
-			if (result.hasOwnProperty("platform")) {
-				appendFridaLog("    |_ Platform  : " + result.platform);
-			}
 			if (result.hasOwnProperty("os")) {
+				if (result.os.hasOwnProperty("name")) {
+					appendFridaLog("    |_ Platform    : " + result.os.name);
+				}
 				if (result.os.hasOwnProperty("version")) {
-					appendFridaLog("    |_ Version   : " + result.os.version);
+					appendFridaLog("    |_ Version     : " + result.os.version);
 				}
 			}
 			if (result.hasOwnProperty("arch")) {
-				appendFridaLog("    |_ Arch      : " + result.arch);
+				appendFridaLog("    |_ Arch        : " + result.arch);
 			}
 			if (result.hasOwnProperty("access")) {
-				appendFridaLog("    |_ Access    : " + result.access);
+				appendFridaLog("    |_ Access      : " + result.access);
 			}
 			if (result.hasOwnProperty("name")) {
-				appendFridaLog("    |_ Host Name : " + result.name + "\n");
+				appendFridaLog("    |_ Host Name   : " + result.name + "\n");
 			}
 		}).catch(err =>{
 			appendFridaLog("[!] Failed to enumerate device properties: " + err + "\n");
