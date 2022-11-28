@@ -1,0 +1,234 @@
+name: Github CI
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+  repository_dispatch:
+  schedule:
+   - cron: "0 */4 * * *" # min hour day week year
+
+defaults:
+  run:
+    shell: bash -x -e -c ". $0" "{0}"
+    working-directory: Fermion
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    outputs:
+      FRIDA_VER: ${{ steps.check.outputs.FRIDA_VER }}
+      FRIDA_GUM_VER: ${{ steps.check.outputs.FRIDA_GUM_VER }}
+      FRIDA_TRIPLES: ${{ steps.check.outputs.FRIDA_TRIPLES }}
+      FRIDA_TRIPLES_OS: ${{ steps.check.outputs.FRIDA_TRIPLES_OS }}
+      FRIDA_ELECTRON: ${{ steps.check.outputs.FRIDA_ELECTRON }}
+      FRIDA_ELECTRON_ASSET: ${{ steps.check.outputs.FRIDA_ELECTRON_ASSET }}
+      FERMION_TAG: ${{ steps.check.outputs.FERMION_TAG }}
+      NO_BUILD: ${{ steps.checkTag.outputs.exists }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: recursive
+      ### XXX: Keep alive cron-type workflows
+      - uses: gautamkrishnar/keepalive-workflow@master
+
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+      
+      - name: Check Frida Version
+        id: check
+        run: python3 ../.github/workflows/get_latest_ver.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - uses: mukunku/tag-exists-action@v1.1.0
+        id: checkTag
+        with:
+          tag: v${{ steps.check.outputs.FERMION_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    needs:
+      - update
+    if: ${{ needs.update.outputs.NO_BUILD == 'false' }}
+    
+    #### Build Matrix
+    strategy:
+      matrix:
+        triple: ${{ fromJSON(needs.update.outputs.FRIDA_TRIPLES) }}
+
+    runs-on: ${{ fromJSON(needs.update.outputs.FRIDA_TRIPLES_OS)[matrix.triple] }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: recursive
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          # cache: 'npm'
+      
+      - name: Update Frida assets
+        run: |
+          pip3 install requests
+          python3 .github/workflows/fetch-frida-asset.py
+        working-directory: ${{ github.workspace }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Frida package
+        id: npmi
+        run: |
+          FRIDA_ELECTRON=$(echo '${{ needs.update.outputs.FRIDA_ELECTRON }}' | jq -r '.["${{ matrix.triple }}"]')
+          # export npm_config_runtime=electron
+          # export npm_config_target=$FRIDA_ELECTRON
+          npm install
+          npm i @types/frida-gum@${{needs.update.outputs.FRIDA_GUM_VER}}
+          npm i frida@${{needs.update.outputs.FRIDA_VER}}
+          npm i electron@$FRIDA_ELECTRON
+          echo "ELECTRON_VER=$FRIDA_ELECTRON" >> $GITHUB_OUTPUT
+      - name: Patch Frida binding
+        run: |
+          FRIDA_ELECTRON_ASSET=$(echo '${{ needs.update.outputs.FRIDA_ELECTRON_ASSET }}' | jq -r '.["${{ matrix.triple }}"]')
+          curl -LJ "$FRIDA_ELECTRON_ASSET" | (cd node_modules/frida; tar zxv)
+      
+      - name: Prepare building..
+        run: |
+          OUT='${{ github.workspace }}/build'
+          echo "OUT=$OUT" >> $GITHUB_ENV
+          rm -rf "$OUT"
+          mkdir "$OUT"
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        run: |
+          npx electron-packager . --icon ./src/images/fermion-ico.ico --out "$OUT"
+      - name: Build Linux
+        if: runner.os == 'Linux'
+        run: |
+          npx electron-packager . --icon ./src/images/fermion-ico.png --out "$OUT"
+      - name: Build macOS
+        if: runner.os == 'macOS'
+        run: |
+          npx electron-packager . --icon ./src/images/fermion-ico.icns --out "$OUT"
+      
+      - name: Package build asset
+        run: |
+          cd "$OUT"
+          find . -type d -name node_modules -prune -exec ls -ald "{}" \;
+          #ZIPNAME="fermion-${{ matrix.triple }}-frida${{ needs.update.outputs.FRIDA_VER }}-gumjs${{ needs.update.outputs.FRIDA_GUM_VER }}"
+          ZIPNAME="fermion-${{ matrix.triple }}-v${{ needs.update.outputs.FERMION_TAG }}"
+          if command -v zip > /dev/null; then
+            (cd *; zip -qr "../$ZIPNAME.zip" .)
+          else
+            (cd *; python3 -c "import shutil; shutil.make_archive('../$ZIPNAME', 'zip', '.')")
+          fi
+          ls -al
+      # Upload action artifact as-is
+      - name: Upload to GitHub Actions artifact
+        uses: NyaMisty/upload-artifact-as-is@master
+        with:
+          path: ${{ env.OUT }}/fermion-*.zip
+
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - update
+      - build
+    name: "release"
+    steps:
+      - name: "Create artifact directory"
+        run: |
+          mkdir -p build_output
+        working-directory: ${{ runner.temp }}
+      - name: "Download all artifacts"
+        uses: actions/download-artifact@v2
+        with:
+          path: ${{ runner.temp }}/build_output
+      - name: "Rearrange artifacts"
+        run: |
+          find build_output
+          mkdir -p build_release
+          mv build_output/*/* build_release
+          ls build_release
+          if [ "$(ls -A build_release)" ]; then exit 0; else exit 1; fi
+        working-directory: ${{ runner.temp }}
+      
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: recursive
+
+      - name: Bump package versions
+        run: |
+          FRIDA_ELECTRON=$(echo '${{ needs.update.outputs.FRIDA_ELECTRON }}' | jq -r 'map(select(true))[0]')
+          # export npm_config_runtime=electron
+          # export npm_config_target=$FRIDA_ELECTRON
+          npm install
+          npm i @types/frida-gum@${{needs.update.outputs.FRIDA_GUM_VER}}
+          npm i frida@${{needs.update.outputs.FRIDA_VER}}
+          npm i electron@$FRIDA_ELECTRON
+
+          npm version ${{ needs.update.outputs.FERMION_TAG }}
+          perl -i -pe 's|badgen.net/badge/Frida-Node%20Version/v[\d.]+?/green|badgen.net/badge/Frida-Node%20Version/v${{ needs.update.outputs.FRIDA_VER }}/green|' ../README.md
+      - name: Update Frida assets
+        run: |
+          python3 .github/workflows/fetch-frida-asset.py
+        working-directory: ${{ github.workspace }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Versions to Git
+        id: bumpver
+        run: |
+          if ! [ -z "$(git status --untracked-files=no --porcelain)" ]; then
+            AUTOUPDATE_PATTERN="^\[AutoUpdate\]"
+            preserve_branch=0
+            if ! [[ "$(git log -1 --pretty=%B)" =~ $AUTOUPDATE_PATTERN ]]; then
+              preserve_branch=1
+              git branch -f before_auto_update
+            fi
+            
+            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git commit -a -m "[AutoUpdate] v${{ needs.update.outputs.FERMION_TAG }}"
+            
+            git push origin master
+
+            if [[ "$preserve_branch" == "1" ]]; then
+              git push -f origin before_auto_update
+            fi
+          fi
+          echo "CURRENT_SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      - name: Create New Release and Upload
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ runner.temp }}/build_release/*"
+          name: "${{ format('Fermion: Frida-v{0} GumJS-v{1}', needs.update.outputs.FRIDA_VER, needs.update.outputs.FRIDA_GUM_VER) }}"
+          body: "${{ format('Frida Triples: {0}\nFrida Electron: {1}\n', needs.update.outputs.FRIDA_TRIPLES, needs.update.outputs.FRIDA_ELECTRON) }}"
+          tag: v${{ needs.update.outputs.FERMION_TAG }}
+          commit: ${{ steps.bumpver.outputs.CURRENT_SHA }}
+          prerelease: false
+          allowUpdates: true
+
+          # XXX: edit this to false & true if you want to preserve original artifact
+          removeArtifacts: true
+          replacesArtifacts: false
+          artifactErrorsFailBuild: true
+          token: ${{ secrets.GITHUB_TOKEN }}
