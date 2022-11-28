@@ -385,7 +385,7 @@ document.getElementById("FridaProc").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [deviceId]
+			additionalArguments: ["FERMION_DEVICEID=" + deviceId]
 		}
 	})
 
@@ -587,7 +587,7 @@ function ChangeLogExclusive(mutex, locktype, data) {
 // Monaco Editor
 //////////////////////////////////////////////////
 
-var LocalLoadLang = function (url, method) {
+function LocalLoadLang(url, method) {
 	var request = new XMLHttpRequest();
 	return new Promise(function (resolve, reject) {
 		request.onreadystatechange = function () {

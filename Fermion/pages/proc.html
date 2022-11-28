@@ -97,8 +97,14 @@
         // Create IPC renderer
         const ipc = require('electron').ipcRenderer;
 
+        var deviceId = null;
         // Device ID
-        var deviceId = window.process.argv[window.process.argv.length - 1];
+        for (let i = window.process.argv.length - 1; i >= 0; i--) {
+            arg = window.process.argv[i];
+            if (arg.startsWith("FERMION_DEVICEID=")) {
+                deviceId = arg.substr("FERMION_DEVICEID=".length)
+            }
+        }
 
         // Retrieve device list
 		async function getDeviceList(devInst) {
