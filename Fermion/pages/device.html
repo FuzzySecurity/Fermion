@@ -73,9 +73,10 @@
 	</script>
     <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
     <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script src="../src/helper.js"></script>
     <script type="text/javascript">
       // Set current device in form
-      document.getElementById("currentDeviceName").value = window.process.argv[window.process.argv.length - 1];
+      document.getElementById("currentDeviceName").value = getExtraArgs()[0];
 
       // Create IPC renderer
       const ipc = require('electron').ipcRenderer;

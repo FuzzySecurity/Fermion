@@ -7,6 +7,7 @@ const BrowserWindow = remote.BrowserWindow;
 const dialog = remote.dialog;
 var fs = require('fs');
 const frida = require('frida');
+const { wrapExtraArgs } = require('../src/helper.js');
 
 // Overwrite default node.js prop to get Jquery working
 window.$ = window.jQuery = require('jquery');
@@ -336,7 +337,7 @@ document.getElementById("setDevice").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [deviceId]
+			additionalArguments: wrapExtraArgs([deviceId])
 		}
 	})
 
@@ -385,7 +386,7 @@ document.getElementById("FridaProc").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: ["FERMION_DEVICEID=" + deviceId]
+			additionalArguments: wrapExtraArgs([deviceId])
 		}
 	})
 
@@ -448,7 +449,7 @@ document.getElementById("FermionAbout").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [deviceId]
+			additionalArguments: wrapExtraArgs([deviceId])
 		}
 	})
 
@@ -515,7 +516,7 @@ document.getElementById("FermionTools").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [sessionPID]
+			additionalArguments: wrapExtraArgs([sessionPID])
 		}
 	})
 

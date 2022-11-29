@@ -132,6 +132,7 @@
 		</div>
 	</div>
 
+	<script src="../src/helper.js"></script>
 	<script type="text/javascript">
     const path = require('path');
     const remote = require('@electron/remote');
@@ -149,7 +150,7 @@
     const bcSVG = new BroadcastChannel('trace-SVG');
     
     // Display current PID
-    var currentProcPID = window.process.argv[window.process.argv.length - 1];
+    var currentProcPID = getExtraArgs()[0];
     if (currentProcPID == "null") {
       currentProcPID = "NONE";
     }

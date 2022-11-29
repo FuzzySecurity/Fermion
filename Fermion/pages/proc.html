@@ -93,18 +93,13 @@
 		<div id="IsError"></div>
 	</div>
 
+	<script src="../src/helper.js"></script>
 	<script type="text/javascript">
         // Create IPC renderer
         const ipc = require('electron').ipcRenderer;
 
-        var deviceId = null;
         // Device ID
-        for (let i = window.process.argv.length - 1; i >= 0; i--) {
-            arg = window.process.argv[i];
-            if (arg.startsWith("FERMION_DEVICEID=")) {
-                deviceId = arg.substr("FERMION_DEVICEID=".length)
-            }
-        }
+        var deviceId = getExtraArgs()[0];
 
         // Retrieve device list
 		async function getDeviceList(devInst) {
