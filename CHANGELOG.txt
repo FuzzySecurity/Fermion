@@ -115,3 +115,13 @@
 -= Fermion v1.8.1 =-
 
 * Minor release to bugfix #15
+
+-= Fermion v1.9 =-
+
+* Upgrade Electron v13.3.0 -> v21.0.0
+* Upgrade Frida v15.1.3 -> v16.0.5
+* Change Frida TypeScript language bindings to use "@types/frida-gum"
+* Allow Fermion to dynamically fetch the current Frida version on load
+* Fix [..What was the issue here for browser arg parsing..?]
+* Use GitHub Actions pipeline to build Fermion
+* NOTE: This is the @MiscMisty update, big thanks for these improvements!

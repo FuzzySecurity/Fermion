@@ -1,4 +1,5 @@
 const EXTRA_ARG_PREFIX="FERMION_ARG="
+
 function getExtraArgs() {
     var args = []
     for (let i = window.process.argv.length - 1; i >= 0; i--) {

@@ -26,6 +26,7 @@ function createWindow() {
       webviewTag: true
     }
   });
+  
   // needed after electron v14.0.1
   // https://stackoverflow.com/questions/69059668/enableremotemodule-is-missing-from-electron-v14-typescript-type-definitions/69059669#69059669
   require('@electron/remote/main').enable(bWin.webContents);
