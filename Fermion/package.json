@@ -13,7 +13,7 @@
     "@electron/remote": "^2.0.0",
     "@types/frida-gum": "^18.3.0",
     "electron": "21.0.0",
-    "frida": "^16.0.5",
+    "frida": "^16.0.7",
     "jquery": "3.6.0",
     "monaco-editor": "0.30.0",
     "mutex-promise": "0.1.0",

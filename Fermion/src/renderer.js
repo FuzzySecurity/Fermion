@@ -326,7 +326,7 @@ document.getElementById("setDevice").onclick = function () {
 	let ProcWin = new BrowserWindow({
 		contextIsolation: false,
 		width: 420,
-		height: 600,
+		height: 615,
 		frame: false,
 		resizable: false,
 		show: false,
@@ -407,7 +407,7 @@ document.getElementById("FridaAttach").onclick = function () {
 	let ProcWin = new BrowserWindow({
 		contextIsolation: false,
 		width: 420,
-		height: 585,
+		height: 595,
 		frame: false,
 		resizable: false,
 		show: false,
@@ -505,7 +505,7 @@ document.getElementById("FermionTools").onclick = function () {
 	TraceWin = new BrowserWindow({
 		contextIsolation: false,
 		width: 425,
-		height: 600,
+		height: 615,
 		frame: false,
 		resizable: false,
 		show: false,
@@ -519,6 +519,9 @@ document.getElementById("FermionTools").onclick = function () {
 			additionalArguments: wrapExtraArgs([sessionPID])
 		}
 	})
+
+	// Node 14+ patch, jesus node devs, just leave us alone with remote already..
+	require("@electron/remote").require("@electron/remote/main").enable(TraceWin.webContents);
 
 	TraceWin.loadURL(modalPath);
 	TraceWin.once('ready-to-show', () => {
@@ -766,10 +769,12 @@ document.getElementById("getDeviceDetail").onclick = function () {
 document.getElementById("FermionMonacoWrap").onclick = function () {
 	// Toggle the current state
 	var wrapState = document.getElementById("FermionMonacoWrap");
-	if (wrapState.classList.contains("checked") == false) {
+	if (wrapState.children[0].checked == false) {
 		MonacoCodeEditor.updateOptions({ wordWrap: "on" });
+		wrapState.children[0].checked = true;
 	} else {
 		MonacoCodeEditor.updateOptions({ wordWrap: "off" });
+		wrapState.children[0].checked = false;
 	}
 }
 

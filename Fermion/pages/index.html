@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+	<style>
+		body {
+			overflow: hidden;
+		}
+	</style>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="">
   </head>
@@ -231,7 +236,7 @@
       			'// ░▒█░    ░▒████▒░██▓ ▒██▒▒██▒   ░██▒░██░░ ████▓▒░▒██░   ▓██░',
       			'//  ▒ ░    ░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░   ░  ░░▓  ░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ',
       			'//  ░       ░ ░  ░  ░▒ ░ ▒░░  ░      ░ ▒ ░  ░ ▒ ▒░ ░ ░░   ░ ▒░',
-      			'//  ░ ░       ░     ░░    v1.9    ░    ▒ ░░ ░ ░ ▒  ░ ~b33f  ░ ',
+				'//  ░ ░       ░     ░░    v' + FERMION_VER + '  ░    ▒ ░░ ░ ░ ▒  ░ ~b33f  ░ ',
       			'//            ░  ░   ░            ░    ░      ░ ░           ░ ',
       			'//',
       			'//   -= Editor =-',
@@ -269,9 +274,10 @@
           dirname(dirname(require.resolve("frida"))),
           "package.json"
       )).version;
+	  const FERMION_VER = require('../package.json').version;
 
       // Print release firda version to textarea
-      appendFridaLog("[+] Fermion v1.8 -> Frida v" + FRIDA_VER);
+      appendFridaLog("[+] Fermion v" + FERMION_VER + " -> Frida v" + FRIDA_VER);
       appendFridaLog("    |_ https://github.com/frida/frida/releases/tag/" + FRIDA_VER);
     </script>
   </body>

@@ -120,8 +120,16 @@
 
 * Upgrade Electron v13.3.0 -> v21.0.0
 * Upgrade Frida v15.1.3 -> v16.0.5
-* Change Frida TypeScript language bindings to use "@types/frida-gum"
-* Allow Fermion to dynamically fetch the current Frida version on load
-* Fix [..What was the issue here for browser arg parsing..?]
-* Use GitHub Actions pipeline to build Fermion
-* NOTE: This is the @MiscMisty update, big thanks for these improvements!
+* Some fixes added for changes in Electron v14+
+* Change Frida TypeScript language bindings to use the Frida Gum node package instead or a local resource
+* Allow Fermion to dynamically display the current Frida version on load
+* Allow Fermion to dynamically display it's own version on load
+* Fix for incorrectly parsing application arguments in some cases
+* Implemented GitHub CI for Fermion
+* MacOS release packages reintroduced with CI
+* A number of documentation, process, HTML changes
+* Added scrollbar to "Process List"
+* Make User, PID, PPID and Process columns sortable
+* Closed most of the items related to #14
+* Update inline documentation
+* NOTE: A big thanks to @MiscMisty for the great PR
