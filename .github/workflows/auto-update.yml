@@ -180,6 +180,9 @@ jobs:
           # Set new gum version for badgen
           perl -i -pe 's|badgen.net/badge/Frida-Gum/v[\d.]+?/grey|badgen.net/badge/Frida-Gum/v${{ needs.update.outputs.FRIDA_GUM_VER }}/grey|' ../README.md
 
+          # Set new Fermion version for badgen
+          perl -i -pe 's|badgen.net/badge/Fermion/v[\d.]+?/grey|badgen.net/badge/Fermion/v${{ needs.update.outputs.FERMION_TAG }}/grey|' ../README.md
+
           # Set new electron version for README
           perl -i -pe 's|npm_config_target=[\d.]+|npm_config_target=${{ needs.update.outputs.FRIDA_ELECTRON }}|' ../README.md
 
