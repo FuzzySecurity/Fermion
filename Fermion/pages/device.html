@@ -3,6 +3,7 @@
         <style>
             body {
                 -webkit-app-region:drag;
+				overflow: hidden;
             }
         </style>
     </head>
@@ -73,62 +74,63 @@
 	</script>
     <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
     <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script src="../src/helper.js"></script>
     <script type="text/javascript">
       // Set current device in form
-      document.getElementById("currentDeviceName").value = window.process.argv[window.process.argv.length - 1];
+      document.getElementById("currentDeviceName").value = getExtraArgs()[0];
 
       // Create IPC renderer
       const ipc = require('electron').ipcRenderer;
 
-		  // Close dialog, make no changes to the device
-		  document.getElementById("CloseDevice").onclick = function () {
-		  	window.close();
-		  }
+      // Close dialog, make no changes to the device
+      document.getElementById("CloseDevice").onclick = function () {
+      	window.close();
+      }
 
       // Update dropdown
-		  async function updateDeviceList() {
-			// Get dropdown array
-			var dn = document.getElementById("deviceName");
-			var currentDevice = dn.options[deviceName.selectedIndex].value;
-			var dnArr = Array.from(dn.options).map(elem => elem.text);
+      async function updateDeviceList() {
+      	// Get dropdown array
+      	var dn = document.getElementById("deviceName");
+      	var currentDevice = dn.options[deviceName.selectedIndex].value;
+      	var dnArr = Array.from(dn.options).map(elem => elem.text);
+      
+      	// Get device array
+      	var dm = frida.getDeviceManager();
+      	var dev = await dm.enumerateDevices();
+      	var devArr = dev.map(elem => elem.id);
+      
+      	// Does the current device still exist?
+      	if (!devArr.includes(currentDevice)) {
+      		// Local is always a valid target
+      		dn.selectedIndex = 0;
+      		deviceId = 'local';
+      	}
+      
+      	// Remove stale entries from the dropdown
+      	dnArr.forEach(function(elem) {
+      		if (!devArr.includes(elem)) {
+      			$(`#deviceName option:contains("${elem}")`).remove()
+      		}
+      	})
+      
+      	// Add new entries to the dropdown
+      	devArr.forEach(function(elem) {
+      		if (!dnArr.includes(elem) && elem != "tcp" && elem != "socket") {
+      			$("#deviceName").append(new Option(elem))
+      		}
+      	})
+	}
 
-			// Get device array
-			var dm = frida.getDeviceManager();
-			var dev = await dm.enumerateDevices();
-			var devArr = dev.map(elem => elem.id);
+      // Poll new devices every 5 seconds
+      updateDeviceList();
+      setInterval(function(){
+      	updateDeviceList();
+      }, 5000);
 
-			// Does the current device still exist?
-			if (!devArr.includes(currentDevice)) {
-				// Local is always a valid target
-				dn.selectedIndex = 0;
-				deviceId = 'local';
-			}
-
-			// Remove stale entries from the dropdown
-			dnArr.forEach(function(elem) {
-				if (!devArr.includes(elem)) {
-					$(`#deviceName option:contains("${elem}")`).remove()
-				}
-			})
-
-			// Add new entries to the dropdown
-			devArr.forEach(function(elem) {
-				if (!dnArr.includes(elem) && elem != "tcp" && elem != "socket") {
-					$("#deviceName").append(new Option(elem))
-				}
-			})
-		}
-
-    // Poll new devices every 5 seconds
-		updateDeviceList();
-		setInterval(function(){
-			updateDeviceList();
-		}, 5000);
-
-    // Update device and close dialog
-		document.getElementById("FridaUpdateDevice").onclick = function () {
-			// New device string
-			var newDevice = null;
+      // Update device and close dialog
+      document.getElementById("FridaUpdateDevice").onclick = function () {
+      // New device string
+      var newDevice = null;
 
       // Which selector are we submitting?
       if (document.getElementById("inputIP").value && document.getElementById("inputPort").value) {
@@ -138,10 +140,10 @@
       }
 
       // Pass by IPC
-			ipc.send('new-device', newDevice);
+      ipc.send('new-device', newDevice);
 
       // Close window
-			window.close();
-		}
+      window.close();
+	}
 	</script>
 </html>

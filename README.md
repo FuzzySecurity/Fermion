@@ -1,4 +1,4 @@
-![release](https://badgen.net/github/tag/FuzzySecurity/Fermion?label=Fermion%20Release&color=green&icon=atom) ![frida-node](https://badgen.net/badge/Frida-Node%20Version/v15.1.3/green?icon=typescript) ![stars](https://badgen.net/github/stars/FuzzySecurity/Fermion?color=cyan&label=Stars) ![forks](https://badgen.net/github/forks/FuzzySecurity/Fermion?color=cyan&label=Forks)
+![CI](https://github.com/FuzzySecurity/Fermion/actions/workflows/auto-update.yml/badge.svg) ![stars](https://badgen.net/github/stars/FuzzySecurity/Fermion?color=orange&label=Stars) ![forks](https://badgen.net/github/forks/FuzzySecurity/Fermion?color=orange&label=Forks) ![release](https://badgen.net/github/tag/FuzzySecurity/Fermion?label=Fermion&color=green&icon=atom) ![frida-node](https://badgen.net/badge/Frida-Node/v16.0.7/grey?icon=npm) ![frida-gum](https://badgen.net/badge/Frida-Gum/v18.3.0/grey?icon=npm)
 
 # Fermion
 
@@ -15,11 +15,11 @@ Download the repository and navigate to the `Fermion` folder in the terminal. On
 ```
 # Windows
 set npm_config_runtime=electron
-set npm_config_target=13.3.0
+set npm_config_target=21.0.0
 
 # Linux / OSX
 export npm_config_runtime=electron
-export npm_config_target=13.3.0
+export npm_config_target=21.0.0
 ```
 
 Afterwards install the packages required to run Fermion with:
@@ -68,10 +68,10 @@ You can get the latest pre-built Fermion for x64 Windows and Linux from [release
 ### General
 
   * **Q**: I want to build my own version of Fermion against a new version of Frida/Electron. How can I find out which `prebuild`’s exist currently?
-    * **A**: You should have a look [here](https://github.com/frida/frida/blob/master/releng/release.py), then simply search for `do_build_command`.
+    * **A**: You should have a look [here](https://github.com/frida/frida/blob/main/.github/workflows/ci.yml), you can check the default build version in `ELECTRON_TARGETS_DEFAULT` and `ELECTRON_TARGETS_FREEBSD` respectively.
 
   * **Q**: I want to review/change/update the type definitions used in the Monaco editor, how can I do that?
-    * **A**: You should have a look [here](https://www.npmjs.com/package/@types/frida-gum), this page has all the releases for the `frida-gum` type definitions. If you want to update or change these definitions in `Fermion`, you should update the following file `Fermion/src/lang/frida.d.ts`.
+    * **A**: This is now handled as part of the build process so your language definitions should always be up-to-date. If you want to edit the app language definitions manually, you can find them here `node_modules/@types/frida-gum/index.d.ts`.
 
   * **Q**: Why you no stable `trace` man (╯°□°)╯︵ ┻━┻
     * **A**: Call tracing is resource intensive. In most cases it will work fine but if you are tracing a `hot pointer` and/or the trace is generating graphs with thousands of nodes then you will likely find that the `trace window` will lag out while it is receiving data. Also, as with any kind of tracing, it can cause process instability / crashing / freezing.
@@ -127,4 +127,4 @@ I just want to give a few special thanks!
 
 * A huge thanks to [Ole André V. Ravnås](https://twitter.com/oleavr) for all his work on Frida and having a lot of patience answering my pedestrian questions about Frida, NodeJS and Monaco!
 * A shout-out also to [mattahan](https://www.deviantart.com/mattahan). I'm using a Buuf icon for the Windows package of Fermion. I'm sure we have all used some of his icons on NIX over the years.
-* Thanks to @lez0sec & @berkayyildi for contributing some time/code to Fermion!
+* Thanks to @MiscMisty, @lez0sec, @berkayyildi for contributing time/code to Fermion!

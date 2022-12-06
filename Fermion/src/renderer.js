@@ -7,6 +7,7 @@ const BrowserWindow = remote.BrowserWindow;
 const dialog = remote.dialog;
 var fs = require('fs');
 const frida = require('frida');
+const { wrapExtraArgs } = require('../src/helper.js');
 
 // Overwrite default node.js prop to get Jquery working
 window.$ = window.jQuery = require('jquery');
@@ -325,7 +326,7 @@ document.getElementById("setDevice").onclick = function () {
 	let ProcWin = new BrowserWindow({
 		contextIsolation: false,
 		width: 420,
-		height: 600,
+		height: 615,
 		frame: false,
 		resizable: false,
 		show: false,
@@ -336,7 +337,7 @@ document.getElementById("setDevice").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [deviceId]
+			additionalArguments: wrapExtraArgs([deviceId])
 		}
 	})
 
@@ -385,7 +386,7 @@ document.getElementById("FridaProc").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [deviceId]
+			additionalArguments: wrapExtraArgs([deviceId])
 		}
 	})
 
@@ -406,7 +407,7 @@ document.getElementById("FridaAttach").onclick = function () {
 	let ProcWin = new BrowserWindow({
 		contextIsolation: false,
 		width: 420,
-		height: 585,
+		height: 595,
 		frame: false,
 		resizable: false,
 		show: false,
@@ -448,7 +449,7 @@ document.getElementById("FermionAbout").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [deviceId]
+			additionalArguments: wrapExtraArgs([deviceId])
 		}
 	})
 
@@ -504,7 +505,7 @@ document.getElementById("FermionTools").onclick = function () {
 	TraceWin = new BrowserWindow({
 		contextIsolation: false,
 		width: 425,
-		height: 600,
+		height: 615,
 		frame: false,
 		resizable: false,
 		show: false,
@@ -515,9 +516,12 @@ document.getElementById("FermionTools").onclick = function () {
 			enableRemoteModule: true,
 			contextIsolation: false,
 			webviewTag: true,
-			additionalArguments: [sessionPID]
+			additionalArguments: wrapExtraArgs([sessionPID])
 		}
 	})
+
+	// Node 14+ patch, jesus node devs, just leave us alone with remote already..
+	require("@electron/remote").require("@electron/remote/main").enable(TraceWin.webContents);
 
 	TraceWin.loadURL(modalPath);
 	TraceWin.once('ready-to-show', () => {
@@ -587,7 +591,7 @@ function ChangeLogExclusive(mutex, locktype, data) {
 // Monaco Editor
 //////////////////////////////////////////////////
 
-var LocalLoadLang = function (url, method) {
+function LocalLoadLang(url, method) {
 	var request = new XMLHttpRequest();
 	return new Promise(function (resolve, reject) {
 		request.onreadystatechange = function () {
@@ -765,10 +769,12 @@ document.getElementById("getDeviceDetail").onclick = function () {
 document.getElementById("FermionMonacoWrap").onclick = function () {
 	// Toggle the current state
 	var wrapState = document.getElementById("FermionMonacoWrap");
-	if (wrapState.classList.contains("checked") == false) {
+	if (wrapState.children[0].checked == false) {
 		MonacoCodeEditor.updateOptions({ wordWrap: "on" });
+		wrapState.children[0].checked = true;
 	} else {
 		MonacoCodeEditor.updateOptions({ wordWrap: "off" });
+		wrapState.children[0].checked = false;
 	}
 }
 

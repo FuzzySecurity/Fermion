@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+	<style>
+		body {
+			overflow: hidden;
+		}
+	</style>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="">
   </head>
@@ -175,7 +180,7 @@
     <link rel="stylesheet" type="text/css" href="../src/custom.css">
     <link rel="stylesheet" type="text/css" href="../src/frameworks/tailwind/tailwind.min.css">
     <link rel="stylesheet" type="text/css" href="../src/frameworks/semantic/semantic.css">
-    <script src="../src/frameworks/semantic/semantic.js"></script>
+    <script defer src="../src/frameworks/semantic/semantic.js"></script>
     <script>
       Split(['#split-0', '#split-1'], {
         direction: 'vertical',
@@ -212,8 +217,9 @@
       	});
       
       	// Load custom Frida Lang TypeScript defs
-      	LocalLoadLang('../src/lang/frida.d.ts').then(function (data) {
-      		monaco.languages.typescript.typescriptDefaults.addExtraLib(data.responseText, uriFromPath(path.join(__dirname, '../src/lang/frida.d.ts')));
+        var fridaDefFile = '../node_modules/@types/frida-gum/index.d.ts'
+      	LocalLoadLang(fridaDefFile).then(function (data) {
+      		monaco.languages.typescript.typescriptDefaults.addExtraLib(data.responseText, uriFromPath(fridaDefFile));
       	});
       
       	// Load monaco theme
@@ -230,7 +236,7 @@
       			'// ░▒█░    ░▒████▒░██▓ ▒██▒▒██▒   ░██▒░██░░ ████▓▒░▒██░   ▓██░',
       			'//  ▒ ░    ░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░   ░  ░░▓  ░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ',
       			'//  ░       ░ ░  ░  ░▒ ░ ▒░░  ░      ░ ▒ ░  ░ ▒ ▒░ ░ ░░   ░ ▒░',
-      			'//  ░ ░       ░     ░░    v1.8    ░    ▒ ░░ ░ ░ ▒  ░ ~b33f  ░ ',
+				'//  ░ ░       ░     ░░    v' + FERMION_VER + '  ░    ▒ ░░ ░ ░ ▒  ░ ~b33f  ░ ',
       			'//            ░  ░   ░            ░    ░      ░ ░           ░ ',
       			'//',
       			'//   -= Editor =-',
@@ -263,15 +269,16 @@
 
     </script>
     <script type="text/javascript">
+      const { dirname, join } = require("path");
+      const FRIDA_VER = require(join(
+          dirname(dirname(require.resolve("frida"))),
+          "package.json"
+      )).version;
+	  const FERMION_VER = require('../package.json').version;
 
       // Print release firda version to textarea
-      appendFridaLog("[+] Fermion v1.8 -> Frida v15.1.3");
-      appendFridaLog("    |_ https://github.com/frida/frida/releases/tag/15.1.3");
-
-      // Wordwrap toggle
-      $('.ui.checkbox')
-        .checkbox()
-      ;
+      appendFridaLog("[+] Fermion v" + FERMION_VER + " -> Frida v" + FRIDA_VER);
+      appendFridaLog("    |_ https://github.com/frida/frida/releases/tag/" + FRIDA_VER);
     </script>
   </body>
 </html>

@@ -3,14 +3,14 @@
 <head>
 	<style>
 		body {
-      background-color: #E0E1E2 !important;
-      -webkit-app-region:drag !important;
-    }
+			background-color: #E0E1E2 !important;
+			-webkit-app-region:drag !important;
+		}
 
 		th {
-      background: #767676 !important;
+			background: #767676 !important;
 			color: white !important;
-      font-size: 12px !important;
+			font-size: 12px !important;
 		}
 
 		div.barFrame {
@@ -26,11 +26,11 @@
 			-webkit-app-region:no-drag;
 			position:fixed;
 			top:40px;
-      margin-top: 8px; 
-      padding:4px;
-      overflow-x: hidden; 
-      overflow-x: auto; 
-      text-align:justify;
+			margin-top: 8px; 
+			padding:4px;
+			overflow-x: hidden; 
+			overflow-x: auto; 
+			text-align:justify;
 			overflow-y:scroll;
 			height: 94vh;
 			width: 100%;
@@ -132,10 +132,12 @@
 		</div>
 	</div>
 
+	<script src="../src/helper.js"></script>
 	<script type="text/javascript">
     const path = require('path');
     const remote = require('@electron/remote');
     const BrowserWindow = remote.BrowserWindow;
+
     // Load GraphViz library
     const { graphviz } = require('node-graphviz');
 
@@ -149,7 +151,7 @@
     const bcSVG = new BroadcastChannel('trace-SVG');
     
     // Display current PID
-    var currentProcPID = window.process.argv[window.process.argv.length - 1];
+    var currentProcPID = getExtraArgs()[0];
     if (currentProcPID == "null") {
       currentProcPID = "NONE";
     }
