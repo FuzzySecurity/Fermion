@@ -119,7 +119,7 @@
 -= Fermion v1.9 =-
 
 * Upgrade Electron v13.3.0 -> v21.0.0
-* Upgrade Frida v15.1.3 -> v16.0.5
+* Upgrade Frida v15.1.3 -> v16.0.7
 * Some fixes added for changes in Electron v14+
 * Change Frida TypeScript language bindings to use the Frida Gum node package instead or a local resource
 * Allow Fermion to dynamically display the current Frida version on load
