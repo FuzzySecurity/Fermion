@@ -207,7 +207,7 @@ jobs:
             git config --local user.name "github-actions[bot]"
             git commit -a -m "[AutoUpdate] v${{ needs.update.outputs.FERMION_TAG }}"
             
-            git push origin main
+            git push origin master
 
             if [[ "$preserve_branch" == "1" ]]; then
               git push -f origin before_auto_update
