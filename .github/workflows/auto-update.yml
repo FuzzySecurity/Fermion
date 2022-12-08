@@ -10,7 +10,7 @@ on:
         default: false
   repository_dispatch:
   schedule:
-   - cron: "0 * */7 * *" # https://crontab.guru/
+   - cron: "0 */12 * * *" # https://crontab.guru/
 
 defaults:
   run:
