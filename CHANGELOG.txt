@@ -133,3 +133,14 @@
 * Closed most of the items related to #14
 * Update inline documentation
 * NOTE: A big thanks to @MiscMisty for the great PR
+
+-= Fermion v1.9.1 =-
+
+* This is a CI build
+* Upgrade Frida v16.0.7 -> v16.0.8
+
+-= Fermion v1.9.2 =-
+
+* This is a CI build
+* Upgrade Frida v16.0.8 -> v16.0.10
+* Upgrade Frida-Gum v18.3.0 -> v18.3.1
