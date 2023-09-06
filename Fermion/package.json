@@ -12,7 +12,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.0",
     "@types/frida-gum": "^18.3.1",
-    "electron": "21.0.0",
+    "electron": "22.3.21",
     "frida": "^16.0.17",
     "jquery": "3.6.0",
     "monaco-editor": "0.30.0",
